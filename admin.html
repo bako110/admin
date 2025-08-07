@@ -1,0 +1,1486 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Administration APCDD - Tableau de bord</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --sidebar-width: 70px;
+            --sidebar-width-expanded: 250px;
+            --primary-color: #198754;
+            --secondary-color: #6c757d;
+            --success-color: #198754;
+            --warning-color: #ffc107;
+            --danger-color: #dc3545;
+            --info-color: #0dcaf0;
+            --dark-color: #212529;
+        }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8f9fa;
+            overflow-x: hidden;
+        }
+        /* Sidebar Styles */
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: calc(-1 * var(--sidebar-width));
+            width: var(--sidebar-width);
+            height: 100vh;
+            background: linear-gradient(135deg, var(--primary-color) 0%, #145a32 100%);
+            transition: all 0.3s ease;
+            z-index: 1000;
+            overflow-y: auto;
+        }
+        .sidebar.active {
+            left: 0;
+            width: var(--sidebar-width-expanded);
+        }
+        .sidebar-header {
+            padding: 20px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        .sidebar-header h3 {
+            color: white;
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin: 0;
+            display: none;
+        }
+        .sidebar.active .sidebar-header h3 {
+            display: block;
+            text-align: center;
+        }
+        .sidebar-menu {
+            padding: 20px 0;
+        }
+        .sidebar-menu .menu-item {
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            padding: 12px;
+            color: rgba(255,255,255,0.8);
+            text-decoration: none;
+            transition: all 0.3s ease;
+            border: none;
+            background: none;
+            width: 100%;
+            overflow: hidden;
+        }
+        .sidebar-menu .menu-item:hover,
+        .sidebar-menu .menu-item.active {
+            background: rgba(255,255,255,0.1);
+            color: white;
+        }
+        .sidebar-menu .menu-item i {
+            font-size: 1.5rem;
+            margin-right: 10px;
+        }
+        .sidebar-menu .menu-item span {
+            display: none;
+            font-size: 0.9rem;
+            white-space: nowrap;
+        }
+        .sidebar.active .sidebar-menu .menu-item span {
+            display: inline;
+        }
+        /* Main Content */
+        .main-content {
+            margin-left: 0;
+            transition: all 0.3s ease;
+            min-height: 100vh;
+        }
+        .main-content.sidebar-open {
+            margin-left: var(--sidebar-width-expanded);
+        }
+        /* Header */
+        .admin-header {
+            background: white;
+            padding: 15px 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 999;
+        }
+        .menu-toggle {
+            background: none;
+            border: none;
+            color: var(--primary-color);
+            font-size: 1.2rem;
+            cursor: pointer;
+        }
+        /* Cards */
+        .stat-card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+        }
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+        .stat-card .icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: white;
+            margin-bottom: 15px;
+        }
+        /* Content Sections */
+        .content-section {
+            display: none;
+            padding: 30px;
+        }
+        .content-section.active {
+            display: block;
+        }
+        .section-header {
+            margin-bottom: 30px;
+        }
+        .section-header h2 {
+            color: var(--dark-color);
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+        .section-header p {
+            color: var(--secondary-color);
+            margin: 0;
+        }
+        /* Tables */
+        .data-table {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .table {
+            margin: 0;
+        }
+        .table thead th {
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            font-weight: 600;
+            padding: 15px;
+        }
+        .table tbody td {
+            padding: 15px;
+            vertical-align: middle;
+        }
+        /* Forms */
+        .form-card {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .form-label {
+            font-weight: 500;
+            margin-bottom: 8px;
+            color: var(--dark-color);
+        }
+        .form-control {
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            padding: 12px 15px;
+            font-size: 14px;
+        }
+        .form-control:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 0.2rem rgba(25, 135, 84, 0.25);
+        }
+        /* Buttons */
+        .btn {
+            border-radius: 8px;
+            font-weight: 500;
+            padding: 10px 20px;
+            transition: all 0.3s ease;
+        }
+        .btn-primary {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+        .btn-primary:hover {
+            background-color: #157347;
+            border-color: #157347;
+        }
+        /* Image preview */
+        .image-preview {
+            max-width: 200px;
+            max-height: 150px;
+            border-radius: 8px;
+            object-fit: cover;
+        }
+        /* Responsive */
+        @media (max-width: 768px) {
+            .main-content {
+                margin-left: 0 !important;
+            }
+            .content-section {
+                padding: 20px;
+            }
+            .stat-card {
+                margin-bottom: 20px;
+            }
+        }
+        /* Gallery Grid */
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+        .gallery-item {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            position: relative;
+        }
+        .gallery-item img {
+            width: 100%;
+            height: 150px;
+            object-fit: cover;
+        }
+        .gallery-item-info {
+            padding: 15px;
+        }
+        .gallery-item-actions {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            display: flex;
+            gap: 5px;
+        }
+        .action-btn {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            border: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        /* News/Events Cards */
+        .news-item {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        .news-item h5 {
+            color: var(--dark-color);
+            margin-bottom: 10px;
+        }
+        .news-meta {
+            color: var(--secondary-color);
+            font-size: 0.9rem;
+            margin-bottom: 15px;
+        }
+        /* Status badges */
+        .status-badge {
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+        .status-active {
+            background-color: #d1e7dd;
+            color: #0f5132;
+        }
+        .status-pending {
+            background-color: #fff3cd;
+            color: #664d03;
+        }
+        .status-inactive {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+    </style>
+</head>
+<body>
+    <!-- Sidebar -->
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <h3><i class="fas fa-seedling me-2"></i>Admin APCDD</h3>
+        </div>
+        <nav class="sidebar-menu">
+            <button class="menu-item active" onclick="showSection('dashboard')">
+                <i class="fas fa-tachometer-alt"></i><span>Tableau de bord</span>
+            </button>
+            <button class="menu-item" onclick="showSection('content')">
+                <i class="fas fa-edit"></i><span>Contenu du site</span>
+            </button>
+            <button class="menu-item" onclick="showSection('gallery')">
+                <i class="fas fa-images"></i><span>Galerie</span>
+            </button>
+            <button class="menu-item" onclick="showSection('events')">
+                <i class="fas fa-calendar"></i><span>Événements</span>
+            </button>
+            <button class="menu-item" onclick="showSection('news')">
+                <i class="fas fa-newspaper"></i><span>Actualités</span>
+            </button>
+            <button class="menu-item" onclick="showSection('members')">
+                <i class="fas fa-users"></i><span>Membres</span>
+            </button>
+            <button class="menu-item" onclick="showSection('donations')">
+                <i class="fas fa-heart"></i><span>Donations</span>
+            </button>
+            <button class="menu-item" onclick="showSection('partners')">
+                <i class="fas fa-handshake"></i><span>Partenaires</span>
+            </button>
+            <button class="menu-item" onclick="showSection('settings')">
+                <i class="fas fa-cog"></i><span>Paramètres</span>
+            </button>
+            <button class="menu-item" onclick="logout()">
+                <i class="fas fa-sign-out-alt"></i><span>Déconnexion</span>
+            </button>
+        </nav>
+    </div>
+    <!-- Main Content -->
+    <div class="main-content" id="mainContent">
+        <!-- Header -->
+        <header class="admin-header">
+            <div class="d-flex justify-content-between align-items-center">
+                <div class="d-flex align-items-center">
+                    <button class="menu-toggle me-3" onclick="toggleSidebar()">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                    <h4 class="mb-0 text-primary fw-bold">Administration APCDD</h4>
+                </div>
+                <div class="d-flex align-items-center">
+                    <div class="dropdown">
+                        <button class="btn btn-outline-primary dropdown-toggle" data-bs-toggle="dropdown">
+                            <i class="fas fa-user me-2"></i>Administrateur
+                        </button>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="#"><i class="fas fa-user-cog me-2"></i>Profil</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item text-danger" href="#" onclick="logout()"><i class="fas fa-sign-out-alt me-2"></i>Déconnexion</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </header>
+        <!-- Dashboard Section -->
+        <section id="dashboard" class="content-section active">
+            <div class="section-header">
+                <h2>Tableau de bord</h2>
+                <p>Vue d'ensemble des activités de l'association</p>
+            </div>
+            <!-- Stats Cards -->
+            <div class="row mb-4">
+                <div class="col-lg-3 col-md-6 mb-3">
+                    <div class="stat-card">
+                        <div class="icon bg-primary">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <h3 class="fw-bold">1,247</h3>
+                        <p class="text-muted mb-0">Membres actifs</p>
+                        <small class="text-success"><i class="fas fa-arrow-up"></i> +12% ce mois</small>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6 mb-3">
+                    <div class="stat-card">
+                        <div class="icon bg-success">
+                            <i class="fas fa-calendar-check"></i>
+                        </div>
+                        <h3 class="fw-bold">78</h3>
+                        <p class="text-muted mb-0">Événements organisés</p>
+                        <small class="text-success"><i class="fas fa-arrow-up"></i> +5% ce mois</small>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6 mb-3">
+                    <div class="stat-card">
+                        <div class="icon bg-warning">
+                            <i class="fas fa-heart"></i>
+                        </div>
+                        <h3 class="fw-bold">2.5M</h3>
+                        <p class="text-muted mb-0">Donations (FCFA)</p>
+                        <small class="text-success"><i class="fas fa-arrow-up"></i> +23% ce mois</small>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6 mb-3">
+                    <div class="stat-card">
+                        <div class="icon bg-info">
+                            <i class="fas fa-tree"></i>
+                        </div>
+                        <h3 class="fw-bold">52,340</h3>
+                        <p class="text-muted mb-0">Arbres plantés</p>
+                        <small class="text-success"><i class="fas fa-arrow-up"></i> +8% ce mois</small>
+                    </div>
+                </div>
+            </div>
+            <!-- Recent Activities -->
+            <div class="row">
+                <div class="col-lg-8">
+                    <div class="data-table">
+                        <div class="p-3 border-bottom">
+                            <h5 class="mb-0">Activités récentes</h5>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Activité</th>
+                                        <th>Type</th>
+                                        <th>Date</th>
+                                        <th>Statut</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>Nouvel adhésion membre</td>
+                                        <td>Membres</td>
+                                        <td>Aujourd'hui 14:30</td>
+                                        <td><span class="status-badge status-active">Actif</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Festival Culturel 2025</td>
+                                        <td>Événement</td>
+                                        <td>Hier 09:15</td>
+                                        <td><span class="status-badge status-pending">En cours</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Donation reçue</td>
+                                        <td>Finance</td>
+                                        <td>Hier 16:20</td>
+                                        <td><span class="status-badge status-active">Confirmé</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Mise à jour galerie</td>
+                                        <td>Contenu</td>
+                                        <td>2 jours</td>
+                                        <td><span class="status-badge status-active">Publié</span></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4">
+                    <div class="form-card">
+                        <h5 class="mb-3">Actions rapides</h5>
+                        <div class="d-grid gap-2">
+                            <button class="btn btn-primary" onclick="showSection('news')">
+                                <i class="fas fa-plus me-2"></i>Ajouter actualité
+                            </button>
+                            <button class="btn btn-success" onclick="showSection('events')">
+                                <i class="fas fa-calendar-plus me-2"></i>Nouvel événement
+                            </button>
+                            <button class="btn btn-info" onclick="showSection('gallery')">
+                                <i class="fas fa-image me-2"></i>Ajouter photos
+                            </button>
+                            <button class="btn btn-warning" onclick="showSection('members')">
+                                <i class="fas fa-user-plus me-2"></i>Gérer membres
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <!-- Content Management Section -->
+        <section id="content" class="content-section">
+            <div class="section-header">
+                <h2>Gestion du contenu</h2>
+                <p>Modifier les textes et informations du site web</p>
+            </div>
+            <div class="row">
+                <div class="col-lg-8">
+                    <div class="form-card">
+                        <h5 class="mb-3">Section À propos</h5>
+                        <form id="aboutForm">
+                            <div class="form-group">
+                                <label class="form-label">Titre principal</label>
+                                <input type="text" class="form-control" value="Notre Mission" />
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Sous-titre</label>
+                                <input type="text" class="form-control" value="Nous créons un pont entre tradition africaine et innovation durable" />
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Description</label>
+                                <textarea class="form-control" rows="6">L'Association pour la Promotion de la Culture et du Développement Durable (APCDD) œuvre pour un avenir où la richesse culturelle africaine et la préservation environnementale se conjuguent harmonieusement pour le bien-être des communautés.</textarea>
+                            </div>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save me-2"></i>Enregistrer
+                            </button>
+                        </form>
+                    </div>
+                </div>
+                <div class="col-lg-4">
+                    <div class="form-card">
+                        <h5 class="mb-3">Statistiques du site</h5>
+                        <form id="statsForm">
+                            <div class="form-group">
+                                <label class="form-label">Membres actifs</label>
+                                <input type="number" class="form-control" value="1200" />
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Projets réalisés</label>
+                                <input type="number" class="form-control" value="75" />
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Arbres plantés</label>
+                                <input type="number" class="form-control" value="50000" />
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Villages touchés</label>
+                                <input type="number" class="form-control" value="45" />
+                            </div>
+                            <button type="submit" class="btn btn-success">
+                                <i class="fas fa-save me-2"></i>Mettre à jour
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <!-- Gallery Management Section -->
+        <section id="gallery" class="content-section">
+            <div class="section-header">
+                <h2>Gestion de la galerie</h2>
+                <p>Ajouter, modifier ou supprimer les images de la galerie</p>
+            </div>
+            <div class="form-card mb-4">
+                <h5 class="mb-3">Ajouter une nouvelle image</h5>
+                <form id="galleryForm">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label class="form-label">Titre</label>
+                                <input type="text" class="form-control" name="title" required />
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label class="form-label">Catégorie</label>
+                                <select class="form-control" name="category" required>
+                                    <option value="">Choisir une catégorie</option>
+                                    <option value="festivals">Festivals</option>
+                                    <option value="environment">Environnement</option>
+                                    <option value="community">Communauté</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Description</label>
+                        <textarea class="form-control" name="description" rows="3"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Image</label>
+                        <input type="file" class="form-control" accept="image/*" onchange="previewImage(this)" />
+                    </div>
+                    <div id="imagePreview" class="mt-3"></div>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-upload me-2"></i>Ajouter à la galerie
+                    </button>
+                </form>
+            </div>
+            <div class="gallery-grid" id="galleryGrid">
+                <!-- Exemples d'images de la galerie -->
+                <div class="gallery-item">
+                    <img src="https://via.placeholder.com/200x150?text=Festival+2025" alt="Festival 2025">
+                    <div class="gallery-item-actions">
+                        <button class="action-btn bg-warning text-dark" onclick="editGalleryItem(1)">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button class="action-btn bg-danger text-white" onclick="deleteGalleryItem(1)">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                    <div class="gallery-item-info">
+                        <h6>Festival Culturel 2025</h6>
+                        <small class="text-muted">Catégorie: Festivals</small>
+                    </div>
+                </div>
+                <div class="gallery-item">
+                    <img src="https://via.placeholder.com/200x150?text=Reboisement" alt="Reboisement">
+                    <div class="gallery-item-actions">
+                        <button class="action-btn bg-warning text-dark" onclick="editGalleryItem(2)">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button class="action-btn bg-danger text-white" onclick="deleteGalleryItem(2)">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                    <div class="gallery-item-info">
+                        <h6>Projet Reboisement</h6>
+                        <small class="text-muted">Catégorie: Environnement</small>
+                    </div>
+                </div>
+                <div class="gallery-item">
+                    <img src="https://via.placeholder.com/200x150?text=Communauté" alt="Action communautaire">
+                    <div class="gallery-item-actions">
+                        <button class="action-btn bg-warning text-dark" onclick="editGalleryItem(3)">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button class="action-btn bg-danger text-white" onclick="deleteGalleryItem(3)">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                    <div class="gallery-item-info">
+                        <h6>Action Communautaire</h6>
+                        <small class="text-muted">Catégorie: Communauté</small>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <!-- Events Management Section -->
+        <section id="events" class="content-section">
+            <div class="section-header">
+                <h2>Gestion des événements</h2>
+                <p>Créer et gérer les événements de l'association</p>
+            </div>
+            <div class="row">
+                <div class="col-lg-6">
+                    <div class="form-card">
+                        <h5 class="mb-3">Ajouter un événement</h5>
+                        <form id="eventForm">
+                            <div class="form-group">
+                                <label class="form-label">Titre de l'événement</label>
+                                <input type="text" class="form-control" name="title" required />
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Date</label>
+                                <input type="date" class="form-control" name="date" required />
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Lieu</label>
+                                <input type="text" class="form-control" name="location" required />
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Description</label>
+                                <textarea class="form-control" name="description" rows="4" required></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Image de couverture</label>
+                                <input type="file" class="form-control" accept="image/*" />
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Statut</label>
+                                <select class="form-control" name="status" required>
+                                    <option value="upcoming">À venir</option>
+                                    <option value="ongoing">En cours</option>
+                                    <option value="completed">Terminé</option>
+                                </select>
+                            </div>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-plus me-2"></i>Créer l'événement
+                            </button>
+                        </form>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="data-table">
+                        <div class="p-3 border-bottom">
+                            <h5 class="mb-0">Événements récents</h5>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Événement</th>
+                                        <th>Date</th>
+                                        <th>Statut</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>Festival Culturel 2025</td>
+                                        <td>15/08/2025</td>
+                                        <td><span class="status-badge status-pending">À venir</span></td>
+                                        <td>
+                                            <button class="btn btn-sm btn-outline-primary me-1">
+                                                <i class="fas fa-edit"></i>
+                                            </button>
+                                            <button class="btn btn-sm btn-outline-danger">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>Campagne Reboisement</td>
+                                        <td>10/08/2025</td>
+                                        <td><span class="status-badge status-active">En cours</span></td>
+                                        <td>
+                                            <button class="btn btn-sm btn-outline-primary me-1">
+                                                <i class="fas fa-edit"></i>
+                                            </button>
+                                            <button class="btn btn-sm btn-outline-danger">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>Formation Artisans</td>
+                                        <td>05/08/2025</td>
+                                        <td><span class="status-badge status-active">Terminé</span></td>
+                                        <td>
+                                            <button class="btn btn-sm btn-outline-primary me-1">
+                                                <i class="fas fa-edit"></i>
+                                            </button>
+                                            <button class="btn btn-sm btn-outline-danger">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <!-- News Management Section -->
+        <section id="news" class="content-section">
+            <div class="section-header">
+                <h2>Gestion des actualités</h2>
+                <p>Publier et gérer les actualités de l'association</p>
+            </div>
+            <div class="row">
+                <div class="col-lg-8">
+                    <div class="form-card">
+                        <h5 class="mb-3">Ajouter une actualité</h5>
+                        <form id="newsForm">
+                            <div class="form-group">
+                                <label class="form-label">Titre de l'actualité</label>
+                                <input type="text" class="form-control" name="title" required />
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label class="form-label">Date de publication</label>
+                                        <input type="date" class="form-control" name="date" required />
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label class="form-label">Catégorie</label>
+                                        <select class="form-control" name="category" required>
+                                            <option value="">Choisir une catégorie</option>
+                                            <option value="culture">Culture</option>
+                                            <option value="environnement">Environnement</option>
+                                            <option value="communauté">Communauté</option>
+                                            <option value="partenariat">Partenariat</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Résumé</label>
+                                <textarea class="form-control" name="summary" rows="3" placeholder="Résumé court de l'actualité" required></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Contenu complet</label>
+                                <textarea class="form-control" name="content" rows="8" required></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Image de couverture</label>
+                                <input type="file" class="form-control" accept="image/*" />
+                            </div>
+                            <div class="form-group">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" name="featured" id="featured">
+                                    <label class="form-check-label" for="featured">
+                                        Mettre en avant
+                                    </label>
+                                </div>
+                            </div>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-plus me-2"></i>Publier l'actualité
+                            </button>
+                            <button type="button" class="btn btn-secondary ms-2">
+                                <i class="fas fa-save me-2"></i>Sauvegarder comme brouillon
+                            </button>
+                        </form>
+                    </div>
+                </div>
+                <div class="col-lg-4">
+                    <div class="form-card">
+                        <h5 class="mb-3">Actualités récentes</h5>
+                        <div class="news-item">
+                            <h6>Festival Culturel des Peuples</h6>
+                            <div class="news-meta">
+                                <i class="fas fa-calendar me-1"></i>15 Août 2025
+                                <span class="ms-2 status-badge status-active">Publié</span>
+                            </div>
+                            <p class="small">Découvrez le programme complet de notre festival annuel...</p>
+                            <div class="d-flex gap-2">
+                                <button class="btn btn-sm btn-outline-primary">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button class="btn btn-sm btn-outline-danger">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="news-item">
+                            <h6>Grande Campagne de Reboisement</h6>
+                            <div class="news-meta">
+                                <i class="fas fa-calendar me-1"></i>10 Août 2025
+                                <span class="ms-2 status-badge status-active">Publié</span>
+                            </div>
+                            <p class="small">Lancement de notre ambitieuse initiative de plantation...</p>
+                            <div class="d-flex gap-2">
+                                <button class="btn btn-sm btn-outline-primary">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button class="btn btn-sm btn-outline-danger">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="news-item">
+                            <h6>Reconnaissance du Ministère</h6>
+                            <div class="news-meta">
+                                <i class="fas fa-calendar me-1"></i>5 Août 2025
+                                <span class="ms-2 status-badge status-pending">Brouillon</span>
+                            </div>
+                            <p class="small">L'APCDD récompensée par le Ministère de la Culture...</p>
+                            <div class="d-flex gap-2">
+                                <button class="btn btn-sm btn-outline-primary">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button class="btn btn-sm btn-outline-danger">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <!-- Members Management Section -->
+        <section id="members" class="content-section">
+            <div class="section-header">
+                <h2>Gestion des membres</h2>
+                <p>Gérer les adhésions et les informations des membres</p>
+            </div>
+            <div class="row mb-4">
+                <div class="col-lg-3 col-md-6 mb-3">
+                    <div class="stat-card">
+                        <div class="icon bg-primary">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <h4 class="fw-bold">1,247</h4>
+                        <p class="text-muted mb-0">Total membres</p>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6 mb-3">
+                    <div class="stat-card">
+                        <div class="icon bg-success">
+                            <i class="fas fa-user-check"></i>
+                        </div>
+                        <h4 class="fw-bold">952</h4>
+                        <p class="text-muted mb-0">Membres actifs</p>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6 mb-3">
+                    <div class="stat-card">
+                        <div class="icon bg-warning">
+                            <i class="fas fa-user-clock"></i>
+                        </div>
+                        <h4 class="fw-bold">45</h4>
+                        <p class="text-muted mb-0">En attente</p>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6 mb-3">
+                    <div class="stat-card">
+                        <div class="icon bg-info">
+                            <i class="fas fa-user-plus"></i>
+                        </div>
+                        <h4 class="fw-bold">23</h4>
+                        <p class="text-muted mb-0">Nouveaux ce mois</p>
+                    </div>
+                </div>
+            </div>
+            <div class="data-table">
+                <div class="p-3 border-bottom d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">Liste des membres</h5>
+                    <div class="d-flex gap-2">
+                        <input type="text" class="form-control form-control-sm" placeholder="Rechercher un membre..." style="width: 200px;">
+                        <select class="form-select form-select-sm" style="width: 150px;">
+                            <option value="">Tous les statuts</option>
+                            <option value="active">Actif</option>
+                            <option value="pending">En attente</option>
+                            <option value="inactive">Inactif</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Nom</th>
+                                <th>Email</th>
+                                <th>Téléphone</th>
+                                <th>Type</th>
+                                <th>Date d'adhésion</th>
+                                <th>Statut</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <div class="avatar bg-primary text-white rounded-circle me-2 d-flex align-items-center justify-content-center" style="width: 35px; height: 35px; font-size: 14px;">
+                                            AB
+                                        </div>
+                                        <div>
+                                            <div class="fw-bold">Amadou Barro</div>
+                                            <small class="text-muted">Ouagadougou</small>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>amadou.barro@email.com</td>
+                                <td>+226 70 12 34 56</td>
+                                <td><span class="badge bg-primary">Actif</span></td>
+                                <td>15/01/2025</td>
+                                <td><span class="status-badge status-active">Actif</span></td>
+                                <td>
+                                    <button class="btn btn-sm btn-outline-primary me-1" title="Voir détails">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                    <button class="btn btn-sm btn-outline-warning me-1" title="Modifier">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                    <button class="btn btn-sm btn-outline-danger" title="Supprimer">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <div class="avatar bg-success text-white rounded-circle me-2 d-flex align-items-center justify-content-center" style="width: 35px; height: 35px; font-size: 14px;">
+                                            FK
+                                        </div>
+                                        <div>
+                                            <div class="fw-bold">Fatima Kaboré</div>
+                                            <small class="text-muted">Bobo-Dioulasso</small>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>fatima.kabore@email.com</td>
+                                <td>+226 75 98 76 54</td>
+                                <td><span class="badge bg-warning">Bienfaiteur</span></td>
+                                <td>03/02/2025</td>
+                                <td><span class="status-badge status-active">Actif</span></td>
+                                <td>
+                                    <button class="btn btn-sm btn-outline-primary me-1" title="Voir détails">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                    <button class="btn btn-sm btn-outline-warning me-1" title="Modifier">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                    <button class="btn btn-sm btn-outline-danger" title="Supprimer">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <div class="avatar bg-info text-white rounded-circle me-2 d-flex align-items-center justify-content-center" style="width: 35px; height: 35px; font-size: 14px;">
+                                            IO
+                                        </div>
+                                        <div>
+                                            <div class="fw-bold">Ibrahim Ouédraogo</div>
+                                            <small class="text-muted">Koudougou</small>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>ibrahim.ouedraogo@email.com</td>
+                                <td>+226 78 45 32 10</td>
+                                <td><span class="badge bg-light text-dark">Sympathisant</span></td>
+                                <td>20/07/2025</td>
+                                <td><span class="status-badge status-pending">En attente</span></td>
+                                <td>
+                                    <button class="btn btn-sm btn-outline-primary me-1" title="Voir détails">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                    <button class="btn btn-sm btn-outline-success me-1" title="Approuver">
+                                        <i class="fas fa-check"></i>
+                                    </button>
+                                    <button class="btn btn-sm btn-outline-danger" title="Rejeter">
+                                        <i class="fas fa-times"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="p-3 border-top">
+                    <nav>
+                        <ul class="pagination pagination-sm mb-0">
+                            <li class="page-item disabled"><a class="page-link" href="#">Précédent</a></li>
+                            <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                            <li class="page-item"><a class="page-link" href="#">2</a></li>
+                            <li class="page-item"><a class="page-link" href="#">3</a></li>
+                            <li class="page-item"><a class="page-link" href="#">Suivant</a></li>
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+        </section>
+        <!-- Donations Management Section -->
+        <section id="donations" class="content-section">
+            <div class="section-header">
+                <h2>Gestion des donations</h2>
+                <p>Suivre et gérer les donations reçues</p>
+            </div>
+            <div class="row mb-4">
+                <div class="col-lg-3 col-md-6 mb-3">
+                    <div class="stat-card">
+                        <div class="icon bg-success">
+                            <i class="fas fa-hand-holding-heart"></i>
+                        </div>
+                        <h4 class="fw-bold">2.5M</h4>
+                        <p class="text-muted mb-0">Total FCFA</p>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6 mb-3">
+                    <div class="stat-card">
+                        <div class="icon bg-warning">
+                            <i class="fas fa-calendar-month"></i>
+                        </div>
+                        <h4 class="fw-bold">456K</h4>
+                        <p class="text-muted mb-0">Ce mois FCFA</p>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6 mb-3">
+                    <div class="stat-card">
+                        <div class="icon bg-info">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <h4 class="fw-bold">189</h4>
+                        <p class="text-muted mb-0">Donateurs</p>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6 mb-3">
+                    <div class="stat-card">
+                        <div class="icon bg-primary">
+                            <i class="fas fa-chart-line"></i>
+                        </div>
+                        <h4 class="fw-bold">13K</h4>
+                        <p class="text-muted mb-0">Moyenne FCFA</p>
+                    </div>
+                </div>
+            </div>
+            <div class="data-table">
+                <div class="p-3 border-bottom d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">Donations récentes</h5>
+                    <div class="d-flex gap-2">
+                        <select class="form-select form-select-sm" style="width: 150px;">
+                            <option value="">Tous les statuts</option>
+                            <option value="completed">Confirmé</option>
+                            <option value="pending">En attente</option>
+                            <option value="failed">Échoué</option>
+                        </select>
+                        <button class="btn btn-primary btn-sm">
+                            <i class="fas fa-download me-1"></i>Exporter
+                        </button>
+                    </div>
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Donateur</th>
+                                <th>Montant</th>
+                                <th>Destination</th>
+                                <th>Mode de paiement</th>
+                                <th>Date</th>
+                                <th>Statut</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>
+                                    <div>
+                                        <div class="fw-bold">Marie Sawadogo</div>
+                                        <small class="text-muted">marie.sawadogo@email.com</small>
+                                    </div>
+                                </td>
+                                <td class="fw-bold text-success">25,000 FCFA</td>
+                                <td>Projets environnementaux</td>
+                                <td>Mobile Money</td>
+                                <td>Aujourd'hui 14:30</td>
+                                <td><span class="status-badge status-active">Confirmé</span></td>
+                                <td>
+                                    <button class="btn btn-sm btn-outline-primary me-1" title="Voir détails">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                    <button class="btn btn-sm btn-outline-success" title="Envoyer reçu">
+                                        <i class="fas fa-receipt"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div>
+                                        <div class="fw-bold">Jean-Baptiste Compaoré</div>
+                                        <small class="text-muted">jb.compaore@email.com</small>
+                                    </div>
+                                </td>
+                                <td class="fw-bold text-success">50,000 FCFA</td>
+                                <td>Fonds général</td>
+                                <td>Virement bancaire</td>
+                                <td>Hier 16:20</td>
+                                <td><span class="status-badge status-active">Confirmé</span></td>
+                                <td>
+                                    <button class="btn btn-sm btn-outline-primary me-1" title="Voir détails">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                    <button class="btn btn-sm btn-outline-success" title="Envoyer reçu">
+                                        <i class="fas fa-receipt"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div>
+                                        <div class="fw-bold">Donation anonyme</div>
+                                        <small class="text-muted">---</small>
+                                    </div>
+                                </td>
+                                <td class="fw-bold text-success">15,000 FCFA</td>
+                                <td>Promotion culturelle</td>
+                                <td>Espèces</td>
+                                <td>2 jours</td>
+                                <td><span class="status-badge status-active">Confirmé</span></td>
+                                <td>
+                                    <button class="btn btn-sm btn-outline-primary me-1" title="Voir détails">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                    <button class="btn btn-sm btn-outline-secondary" title="Anonyme" disabled>
+                                        <i class="fas fa-user-secret"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+        <!-- Partners Management Section -->
+        <section id="partners" class="content-section">
+            <div class="section-header">
+                <h2>Gestion des partenaires</h2>
+                <p>Gérer les logos et informations des partenaires</p>
+            </div>
+            <div class="row">
+                <div class="col-lg-6">
+                    <div class="form-card">
+                        <h5 class="mb-3">Ajouter un partenaire</h5>
+                        <form id="partnerForm">
+                            <div class="form-group">
+                                <label class="form-label">Nom du partenaire</label>
+                                <input type="text" class="form-control" name="name" required />
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Type de partenariat</label>
+                                <select class="form-control" name="type" required>
+                                    <option value="">Choisir un type</option>
+                                    <option value="institutional">Institutionnel</option>
+                                    <option value="financial">Financier</option>
+                                    <option value="technical">Technique</option>
+                                    <option value="strategic">Stratégique</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Site web</label>
+                                <input type="url" class="form-control" name="website" placeholder="https://exemple.com" />
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Description</label>
+                                <textarea class="form-control" name="description" rows="3"></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Logo</label>
+                                <input type="file" class="form-control" accept="image/*" onchange="previewPartnerLogo(this)" />
+                                <small class="text-muted">Format recommandé: PNG transparent, 300x200px</small>
+                            </div>
+                            <div id="partnerLogoPreview" class="mt-3"></div>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-plus me-2"></i>Ajouter le partenaire
+                            </button>
+                        </form>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="form-card">
+                        <h5 class="mb-3">Partenaires actuels</h5>
+                        <div class="row">
+                            <div class="col-6 mb-3">
+                                <div class="partner-item bg-light p-3 rounded text-center position-relative">
+                                    <img src="https://via.placeholder.com/120x80?text=Min.+Culture" class="img-fluid mb-2" alt="Ministère Culture">
+                                    <h6 class="small fw-bold">Ministère de la Culture</h6>
+                                    <small class="text-muted">Institutionnel</small>
+                                    <div class="position-absolute top-0 end-0 m-2">
+                                        <button class="btn btn-sm btn-outline-warning me-1">
+                                            <i class="fas fa-edit"></i>
+                                        </button>
+                                        <button class="btn btn-sm btn-outline-danger">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-6 mb-3">
+                                <div class="partner-item bg-light p-3 rounded text-center position-relative">
+                                    <img src="https://via.placeholder.com/120x80?text=PNUD" class="img-fluid mb-2" alt="PNUD">
+                                    <h6 class="small fw-bold">PNUD Burkina</h6>
+                                    <small class="text-muted">Financier</small>
+                                    <div class="position-absolute top-0 end-0 m-2">
+                                        <button class="btn btn-sm btn-outline-warning me-1">
+                                            <i class="fas fa-edit"></i>
+                                        </button>
+                                        <button class="btn btn-sm btn-outline-danger">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-6 mb-3">
+                                <div class="partner-item bg-light p-3 rounded text-center position-relative">
+                                    <img src="https://via.placeholder.com/120x80?text=BAD" class="img-fluid mb-2" alt="BAD">
+                                    <h6 class="small fw-bold">Banque Africaine</h6>
+                                    <small class="text-muted">Financier</small>
+                                    <div class="position-absolute top-0 end-0 m-2">
+                                        <button class="btn btn-sm btn-outline-warning me-1">
+                                            <i class="fas fa-edit"></i>
+                                        </button>
+                                        <button class="btn btn-sm btn-outline-danger">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-6 mb-3">
+                                <div class="partner-item bg-light p-3 rounded text-center position-relative">
+                                    <img src="https://via.placeholder.com/120x80?text=CEDEAO" class="img-fluid mb-2" alt="CEDEAO">
+                                    <h6 class="small fw-bold">CEDEAO</h6>
+                                    <small class="text-muted">Stratégique</small>
+                                    <div class="position-absolute top-0 end-0 m-2">
+                                        <button class="btn btn-sm btn-outline-warning me-1">
+                                            <i class="fas fa-edit"></i>
+                                        </button>
+                                        <button class="btn btn-sm btn-outline-danger">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <!-- Settings Section -->
+        <section id="settings" class="content-section">
+            <div class="section-header">
+                <h2>Paramètres</h2>
+                <p>Configuration générale du site et de l'administration</p>
+            </div>
+            <div class="row">
+                <div class="col-lg-8">
+                    <div class="form-card">
+                        <h5 class="mb-3">Informations générales</h5>
+                        <form id="settingsForm">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label class="form-label">Nom de l'association</label>
+                                        <input type="text" class="form-control" value="APCDD" required />
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label class="form-label">Sigle</label>
+                                        <input type="text" class="form-control" value="APCDD" required />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Adresse</label>
+                                <input type="text" class="form-control" value="123 Avenue de la Culture, Ouagadougou" required />
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label class="form-label">Téléphone</label>
+                                        <input type="tel" class="form-control" value="+226 25 30 12 34" required />
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label class="form-label">Email</label>
+                                        <input type="email" class="form-control" value="contact@apcdd.org" required />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Description courte</label>
+                                <textarea class="form-control" rows="3" required>L'Association pour la Promotion de la Culture et du Développement Durable œuvre pour un avenir où la richesse culturelle africaine et la préservation environnementale se conjuguent harmonieusement.</textarea>
+                            </div>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save me-2"></i>Enregistrer les modifications
+                            </button>
+                        </form>
+                    </div>
+                </div>
+                <div class="col-lg-4">
+                    <div class="form-card">
+                        <h5 class="mb-3">Sécurité</h5>
+                        <form id="securityForm">
+                            <div class="form-group">
+                                <label class="form-label">Mot de passe actuel</label>
+                                <input type="password" class="form-control" required />
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Nouveau mot de passe</label>
+                                <input type="password" class="form-control" required />
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Confirmer le nouveau mot de passe</label>
+                                <input type="password" class="form-control" required />
+                            </div>
+                            <button type="submit" class="btn btn-warning">
+                                <i class="fas fa-lock me-2"></i>Changer le mot de passe
+                            </button>
+                        </form>
+                    </div>
+                    <div class="form-card mt-4">
+                        <h5 class="mb-3">Logo du site</h5>
+                        <form id="logoForm">
+                            <div class="form-group">
+                                <label class="form-label">Logo principal</label>
+                                <input type="file" class="form-control" accept="image/*" />
+                                <small class="text-muted">Format recommandé: PNG transparent, 200x100px</small>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Favicon</label>
+                                <input type="file" class="form-control" accept="image/*" />
+                                <small class="text-muted">Format: ICO ou PNG, 32x32px</small>
+                            </div>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-upload me-2"></i>Mettre à jour
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+    <!-- Bootstrap JS Bundle with Popper -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Toggle sidebar
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const mainContent = document.getElementById('mainContent');
+            sidebar.classList.toggle('active');
+            mainContent.classList.toggle('sidebar-open');
+        }
+        // Show specific section
+        function showSection(sectionId) {
+            // Hide all sections
+            document.querySelectorAll('.content-section').forEach(section => {
+                section.classList.remove('active');
+            });
+            // Show selected section
+            document.getElementById(sectionId).classList.add('active');
+            // Update active menu item
+            document.querySelectorAll('.menu-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            event.currentTarget.classList.add('active');
+            // Hide sidebar after selection
+            const sidebar = document.getElementById('sidebar');
+            const mainContent = document.getElementById('mainContent');
+            sidebar.classList.remove('active');
+            mainContent.classList.remove('sidebar-open');
+        }
+        // Image preview for gallery
+        function previewImage(input) {
+            const preview = document.getElementById('imagePreview');
+            preview.innerHTML = '';
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const img = document.createElement('img');
+                    img.src = e.target.result;
+                    img.className = 'image-preview';
+                    preview.appendChild(img);
+                }
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+        // Image preview for partner logo
+        function previewPartnerLogo(input) {
+            const preview = document.getElementById('partnerLogoPreview');
+            preview.innerHTML = '';
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const img = document.createElement('img');
+                    img.src = e.target.result;
+                    img.className = 'image-preview';
+                    preview.appendChild(img);
+                }
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+        // Edit gallery item
+        function editGalleryItem(id) {
+            alert('Modification de l\'élément de galerie #' + id);
+            // Ici vous pourriez ouvrir un modal ou remplir le formulaire avec les données existantes
+        }
+        // Delete gallery item
+        function deleteGalleryItem(id) {
+            if (confirm('Êtes-vous sûr de vouloir supprimer cet élément ?')) {
+                alert('Élément #' + id + ' supprimé');
+                // Ici vous pourriez faire une requête AJAX pour supprimer l'élément de la base de données
+            }
+        }
+        // Logout function
+        function logout() {
+            if (confirm('Êtes-vous sûr de vouloir vous déconnecter ?')) {
+                alert('Déconnexion réussie');
+                // Ici vous pourriez rediriger vers la page de login
+                // window.location.href = 'login.html';
+            }
+        }
+    </script>
+</body>
+</html>
