@@ -11,7 +11,15 @@
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="admin.css">
-    <script src ="admin.js" defer></script>
+    <script src="admin.js" defer></script>
+    <script src="scripts/events.js" defer></script>
+    <script src="scripts/config.js" defer></script>
+    <script src="scripts/gallery.js" defer></script>
+    <script src="scripts/news.js" defer></script>
+    <!-- <script src="scripts/members.js" defer></script> -->
+    <script src="scripts/parteners.js" defer></script>
+    <!-- <script src="scripts/members.js" defer></script> -->
+    <script src="scripts/content.js" defer></script>
 </head>
 <body>
     <!-- Sidebar -->
@@ -52,6 +60,7 @@
             </button>
         </nav>
     </div>
+
     <!-- Main Content -->
     <div class="main-content" id="mainContent">
         <!-- Header -->
@@ -77,6 +86,7 @@
                 </div>
             </div>
         </header>
+
         <!-- Dashboard Section -->
         <section id="dashboard" class="content-section active">
             <div class="section-header">
@@ -126,6 +136,7 @@
                     </div>
                 </div>
             </div>
+
             <!-- Recent Activities -->
             <div class="row">
                 <div class="col-lg-8">
@@ -194,63 +205,65 @@
                 </div>
             </div>
         </section>
-        <!-- Content Management Section -->
-        <section id="content" class="content-section">
-            <div class="section-header">
-                <h2>Gestion du contenu</h2>
-                <p>Modifier les textes et informations du site web</p>
-            </div>
-            <div class="row">
-                <div class="col-lg-8">
-                    <div class="form-card">
-                        <h5 class="mb-3">Section À propos</h5>
-                        <form id="aboutForm">
-                            <div class="form-group">
-                                <label class="form-label">Titre principal</label>
-                                <input type="text" class="form-control" value="Notre Mission" />
-                            </div>
-                            <div class="form-group">
-                                <label class="form-label">Sous-titre</label>
-                                <input type="text" class="form-control" value="Nous créons un pont entre tradition africaine et innovation durable" />
-                            </div>
-                            <div class="form-group">
-                                <label class="form-label">Description</label>
-                                <textarea class="form-control" rows="6">L'Association pour la Promotion de la Culture et du Développement Durable (APCDD) œuvre pour un avenir où la richesse culturelle africaine et la préservation environnementale se conjuguent harmonieusement pour le bien-être des communautés.</textarea>
-                            </div>
-                            <button type="submit" class="btn btn-primary">
-                                <i class="fas fa-save me-2"></i>Enregistrer
-                            </button>
-                        </form>
-                    </div>
-                </div>
-                <div class="col-lg-4">
-                    <div class="form-card">
-                        <h5 class="mb-3">Statistiques du site</h5>
-                        <form id="statsForm">
-                            <div class="form-group">
-                                <label class="form-label">Membres actifs</label>
-                                <input type="number" class="form-control" value="1200" />
-                            </div>
-                            <div class="form-group">
-                                <label class="form-label">Projets réalisés</label>
-                                <input type="number" class="form-control" value="75" />
-                            </div>
-                            <div class="form-group">
-                                <label class="form-label">Arbres plantés</label>
-                                <input type="number" class="form-control" value="50000" />
-                            </div>
-                            <div class="form-group">
-                                <label class="form-label">Villages touchés</label>
-                                <input type="number" class="form-control" value="45" />
-                            </div>
-                            <button type="submit" class="btn btn-success">
-                                <i class="fas fa-save me-2"></i>Mettre à jour
-                            </button>
-                        </form>
-                    </div>
-                </div>
-            </div>
-        </section>
+
+<!-- Content Management Section -->
+<section id="content" class="content-section">
+  <div class="section-header">
+    <h2>Gestion du contenu</h2>
+    <p>Modifier les textes et informations du site web</p>
+  </div>
+  <div class="row">
+    <div class="col-lg-8">
+      <div class="form-card">
+        <h5 class="mb-3">Section À propos</h5>
+        <form id="aboutForm">
+          <div class="form-group">
+            <label class="form-label">Titre principal</label>
+            <input type="text" id="aboutTitle" class="form-control" value="" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Sous-titre</label>
+            <input type="text" id="aboutSubtitle" class="form-control" value="" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Description</label>
+            <textarea id="aboutDescription" class="form-control" rows="6"></textarea>
+          </div>
+          <button type="submit" class="btn btn-primary">
+            <i class="fas fa-save me-2"></i>Enregistrer
+          </button>
+        </form>
+      </div>
+    </div>
+    <div class="col-lg-4">
+      <div class="form-card">
+        <h5 class="mb-3">Statistiques du site</h5>
+        <form id="statsForm">
+          <div class="form-group">
+            <label class="form-label">Membres actifs</label>
+            <input type="number" id="statsActiveMembers" class="form-control" value="" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Projets réalisés</label>
+            <input type="number" id="statsProjectsDone" class="form-control" value="" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Arbres plantés</label>
+            <input type="number" id="statsTreesPlanted" class="form-control" value="" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Villages touchés</label>
+            <input type="number" id="statsVillagesTouched" class="form-control" value="" />
+          </div>
+          <button type="submit" class="btn btn-success">
+            <i class="fas fa-save me-2"></i>Mettre à jour
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+</section>
+
         <!-- Gallery Management Section -->
         <section id="gallery" class="content-section">
             <div class="section-header">
@@ -258,7 +271,7 @@
                 <p>Ajouter, modifier ou supprimer les images de la galerie</p>
             </div>
             <div class="form-card mb-4">
-                <h5 class="mb-3">Ajouter une nouvelle image</h5>
+                <h5 class="mb-3" id="formTitle">Ajouter une nouvelle image</h5>
                 <form id="galleryForm">
                     <div class="row">
                         <div class="col-md-6">
@@ -288,60 +301,16 @@
                         <input type="file" class="form-control" accept="image/*" onchange="previewImage(this)" />
                     </div>
                     <div id="imagePreview" class="mt-3"></div>
-                    <button type="submit" class="btn btn-primary">
+                    <button type="submit" class="btn btn-primary" id="submitBtn">
                         <i class="fas fa-upload me-2"></i>Ajouter à la galerie
                     </button>
                 </form>
             </div>
             <div class="gallery-grid" id="galleryGrid">
-                <!-- Exemples d'images de la galerie -->
-                <div class="gallery-item">
-                    <img src="https://via.placeholder.com/200x150?text=Festival+2025" alt="Festival 2025">
-                    <div class="gallery-item-actions">
-                        <button class="action-btn bg-warning text-dark" onclick="editGalleryItem(1)">
-                            <i class="fas fa-edit"></i>
-                        </button>
-                        <button class="action-btn bg-danger text-white" onclick="deleteGalleryItem(1)">
-                            <i class="fas fa-trash"></i>
-                        </button>
-                    </div>
-                    <div class="gallery-item-info">
-                        <h6>Festival Culturel 2025</h6>
-                        <small class="text-muted">Catégorie: Festivals</small>
-                    </div>
-                </div>
-                <div class="gallery-item">
-                    <img src="https://via.placeholder.com/200x150?text=Reboisement" alt="Reboisement">
-                    <div class="gallery-item-actions">
-                        <button class="action-btn bg-warning text-dark" onclick="editGalleryItem(2)">
-                            <i class="fas fa-edit"></i>
-                        </button>
-                        <button class="action-btn bg-danger text-white" onclick="deleteGalleryItem(2)">
-                            <i class="fas fa-trash"></i>
-                        </button>
-                    </div>
-                    <div class="gallery-item-info">
-                        <h6>Projet Reboisement</h6>
-                        <small class="text-muted">Catégorie: Environnement</small>
-                    </div>
-                </div>
-                <div class="gallery-item">
-                    <img src="https://via.placeholder.com/200x150?text=Communauté" alt="Action communautaire">
-                    <div class="gallery-item-actions">
-                        <button class="action-btn bg-warning text-dark" onclick="editGalleryItem(3)">
-                            <i class="fas fa-edit"></i>
-                        </button>
-                        <button class="action-btn bg-danger text-white" onclick="deleteGalleryItem(3)">
-                            <i class="fas fa-trash"></i>
-                        </button>
-                    </div>
-                    <div class="gallery-item-info">
-                        <h6>Action Communautaire</h6>
-                        <small class="text-muted">Catégorie: Communauté</small>
-                    </div>
-                </div>
+                <!-- Les images chargées via JS -->
             </div>
         </section>
+
         <!-- Events Management Section -->
         <section id="events" class="content-section">
             <div class="section-header">
@@ -352,7 +321,7 @@
                 <div class="col-lg-6">
                     <div class="form-card">
                         <h5 class="mb-3">Ajouter un événement</h5>
-                        <form id="eventForm">
+                        <form id="eventForm" enctype="multipart/form-data">
                             <div class="form-group">
                                 <label class="form-label">Titre de l'événement</label>
                                 <input type="text" class="form-control" name="title" required />
@@ -371,7 +340,7 @@
                             </div>
                             <div class="form-group">
                                 <label class="form-label">Image de couverture</label>
-                                <input type="file" class="form-control" accept="image/*" />
+                                <input type="file" class="form-control" name="image" accept="image/*" />
                             </div>
                             <div class="form-group">
                                 <label class="form-label">Statut</label>
@@ -393,7 +362,7 @@
                             <h5 class="mb-0">Événements récents</h5>
                         </div>
                         <div class="table-responsive">
-                            <table class="table">
+                            <table class="table" id="eventsTable">
                                 <thead>
                                     <tr>
                                         <th>Événement</th>
@@ -403,45 +372,7 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr>
-                                        <td>Festival Culturel 2025</td>
-                                        <td>15/08/2025</td>
-                                        <td><span class="status-badge status-pending">À venir</span></td>
-                                        <td>
-                                            <button class="btn btn-sm btn-outline-primary me-1">
-                                                <i class="fas fa-edit"></i>
-                                            </button>
-                                            <button class="btn btn-sm btn-outline-danger">
-                                                <i class="fas fa-trash"></i>
-                                            </button>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>Campagne Reboisement</td>
-                                        <td>10/08/2025</td>
-                                        <td><span class="status-badge status-active">En cours</span></td>
-                                        <td>
-                                            <button class="btn btn-sm btn-outline-primary me-1">
-                                                <i class="fas fa-edit"></i>
-                                            </button>
-                                            <button class="btn btn-sm btn-outline-danger">
-                                                <i class="fas fa-trash"></i>
-                                            </button>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>Formation Artisans</td>
-                                        <td>05/08/2025</td>
-                                        <td><span class="status-badge status-active">Terminé</span></td>
-                                        <td>
-                                            <button class="btn btn-sm btn-outline-primary me-1">
-                                                <i class="fas fa-edit"></i>
-                                            </button>
-                                            <button class="btn btn-sm btn-outline-danger">
-                                                <i class="fas fa-trash"></i>
-                                            </button>
-                                        </td>
-                                    </tr>
+                                    <!-- Les événements seront injectés ici dynamiquement -->
                                 </tbody>
                             </table>
                         </div>
@@ -449,6 +380,7 @@
                 </div>
             </div>
         </section>
+
         <!-- News Management Section -->
         <section id="news" class="content-section">
             <div class="section-header">
@@ -459,7 +391,8 @@
                 <div class="col-lg-8">
                     <div class="form-card">
                         <h5 class="mb-3">Ajouter une actualité</h5>
-                        <form id="newsForm">
+                        <form id="newsForm" enctype="multipart/form-data">
+                            <input type="hidden" id="newsId" name="newsId" value="" />
                             <div class="form-group">
                                 <label class="form-label">Titre de l'actualité</label>
                                 <input type="text" class="form-control" name="title" required />
@@ -494,7 +427,7 @@
                             </div>
                             <div class="form-group">
                                 <label class="form-label">Image de couverture</label>
-                                <input type="file" class="form-control" accept="image/*" />
+                                <input type="file" class="form-control" accept="image/*" name="image" />
                             </div>
                             <div class="form-group">
                                 <div class="form-check">
@@ -504,10 +437,10 @@
                                     </label>
                                 </div>
                             </div>
-                            <button type="submit" class="btn btn-primary">
+                            <button type="submit" class="btn btn-primary" id="btnPublish">
                                 <i class="fas fa-plus me-2"></i>Publier l'actualité
                             </button>
-                            <button type="button" class="btn btn-secondary ms-2">
+                            <button type="button" class="btn btn-secondary ms-2" id="btnDraft">
                                 <i class="fas fa-save me-2"></i>Sauvegarder comme brouillon
                             </button>
                         </form>
@@ -516,58 +449,14 @@
                 <div class="col-lg-4">
                     <div class="form-card">
                         <h5 class="mb-3">Actualités récentes</h5>
-                        <div class="news-item">
-                            <h6>Festival Culturel des Peuples</h6>
-                            <div class="news-meta">
-                                <i class="fas fa-calendar me-1"></i>15 Août 2025
-                                <span class="ms-2 status-badge status-active">Publié</span>
-                            </div>
-                            <p class="small">Découvrez le programme complet de notre festival annuel...</p>
-                            <div class="d-flex gap-2">
-                                <button class="btn btn-sm btn-outline-primary">
-                                    <i class="fas fa-edit"></i>
-                                </button>
-                                <button class="btn btn-sm btn-outline-danger">
-                                    <i class="fas fa-trash"></i>
-                                </button>
-                            </div>
-                        </div>
-                        <div class="news-item">
-                            <h6>Grande Campagne de Reboisement</h6>
-                            <div class="news-meta">
-                                <i class="fas fa-calendar me-1"></i>10 Août 2025
-                                <span class="ms-2 status-badge status-active">Publié</span>
-                            </div>
-                            <p class="small">Lancement de notre ambitieuse initiative de plantation...</p>
-                            <div class="d-flex gap-2">
-                                <button class="btn btn-sm btn-outline-primary">
-                                    <i class="fas fa-edit"></i>
-                                </button>
-                                <button class="btn btn-sm btn-outline-danger">
-                                    <i class="fas fa-trash"></i>
-                                </button>
-                            </div>
-                        </div>
-                        <div class="news-item">
-                            <h6>Reconnaissance du Ministère</h6>
-                            <div class="news-meta">
-                                <i class="fas fa-calendar me-1"></i>5 Août 2025
-                                <span class="ms-2 status-badge status-pending">Brouillon</span>
-                            </div>
-                            <p class="small">L'APCDD récompensée par le Ministère de la Culture...</p>
-                            <div class="d-flex gap-2">
-                                <button class="btn btn-sm btn-outline-primary">
-                                    <i class="fas fa-edit"></i>
-                                </button>
-                                <button class="btn btn-sm btn-outline-danger">
-                                    <i class="fas fa-trash"></i>
-                                </button>
-                            </div>
+                        <div id="newsList">
+                            <!-- Les actualités viendront ici via JS -->
                         </div>
                     </div>
                 </div>
             </div>
         </section>
+
         <!-- Members Management Section -->
         <section id="members" class="content-section">
             <div class="section-header">
@@ -742,6 +631,7 @@
                 </div>
             </div>
         </section>
+
         <!-- Donations Management Section -->
         <section id="donations" class="content-section">
             <div class="section-header">
@@ -883,120 +773,63 @@
                 </div>
             </div>
         </section>
-        <!-- Partners Management Section -->
-        <section id="partners" class="content-section">
-            <div class="section-header">
-                <h2>Gestion des partenaires</h2>
-                <p>Gérer les logos et informations des partenaires</p>
-            </div>
-            <div class="row">
-                <div class="col-lg-6">
-                    <div class="form-card">
-                        <h5 class="mb-3">Ajouter un partenaire</h5>
-                        <form id="partnerForm">
-                            <div class="form-group">
-                                <label class="form-label">Nom du partenaire</label>
-                                <input type="text" class="form-control" name="name" required />
-                            </div>
-                            <div class="form-group">
-                                <label class="form-label">Type de partenariat</label>
-                                <select class="form-control" name="type" required>
-                                    <option value="">Choisir un type</option>
-                                    <option value="institutional">Institutionnel</option>
-                                    <option value="financial">Financier</option>
-                                    <option value="technical">Technique</option>
-                                    <option value="strategic">Stratégique</option>
-                                </select>
-                            </div>
-                            <div class="form-group">
-                                <label class="form-label">Site web</label>
-                                <input type="url" class="form-control" name="website" placeholder="https://exemple.com" />
-                            </div>
-                            <div class="form-group">
-                                <label class="form-label">Description</label>
-                                <textarea class="form-control" name="description" rows="3"></textarea>
-                            </div>
-                            <div class="form-group">
-                                <label class="form-label">Logo</label>
-                                <input type="file" class="form-control" accept="image/*" onchange="previewPartnerLogo(this)" />
-                                <small class="text-muted">Format recommandé: PNG transparent, 300x200px</small>
-                            </div>
-                            <div id="partnerLogoPreview" class="mt-3"></div>
-                            <button type="submit" class="btn btn-primary">
-                                <i class="fas fa-plus me-2"></i>Ajouter le partenaire
-                            </button>
-                        </form>
+<!-- Partners Management Section -->
+<section id="partners" class="content-section">
+    <div class="section-header">
+        <h2>Gestion des partenaires</h2>
+        <p>Gérer les logos et informations des partenaires</p>
+    </div>
+    <div class="row">
+        <div class="col-lg-6">
+            <div class="form-card">
+                <h5 class="mb-3">Ajouter un partenaire</h5>
+                <form id="partnerForm" enctype="multipart/form-data">
+                    <div class="form-group">
+                        <label class="form-label">Nom du partenaire</label>
+                        <input type="text" class="form-control" name="name" required />
                     </div>
-                </div>
-                <div class="col-lg-6">
-                    <div class="form-card">
-                        <h5 class="mb-3">Partenaires actuels</h5>
-                        <div class="row">
-                            <div class="col-6 mb-3">
-                                <div class="partner-item bg-light p-3 rounded text-center position-relative">
-                                    <img src="https://via.placeholder.com/120x80?text=Min.+Culture" class="img-fluid mb-2" alt="Ministère Culture">
-                                    <h6 class="small fw-bold">Ministère de la Culture</h6>
-                                    <small class="text-muted">Institutionnel</small>
-                                    <div class="position-absolute top-0 end-0 m-2">
-                                        <button class="btn btn-sm btn-outline-warning me-1">
-                                            <i class="fas fa-edit"></i>
-                                        </button>
-                                        <button class="btn btn-sm btn-outline-danger">
-                                            <i class="fas fa-trash"></i>
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-6 mb-3">
-                                <div class="partner-item bg-light p-3 rounded text-center position-relative">
-                                    <img src="https://via.placeholder.com/120x80?text=PNUD" class="img-fluid mb-2" alt="PNUD">
-                                    <h6 class="small fw-bold">PNUD Burkina</h6>
-                                    <small class="text-muted">Financier</small>
-                                    <div class="position-absolute top-0 end-0 m-2">
-                                        <button class="btn btn-sm btn-outline-warning me-1">
-                                            <i class="fas fa-edit"></i>
-                                        </button>
-                                        <button class="btn btn-sm btn-outline-danger">
-                                            <i class="fas fa-trash"></i>
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-6 mb-3">
-                                <div class="partner-item bg-light p-3 rounded text-center position-relative">
-                                    <img src="https://via.placeholder.com/120x80?text=BAD" class="img-fluid mb-2" alt="BAD">
-                                    <h6 class="small fw-bold">Banque Africaine</h6>
-                                    <small class="text-muted">Financier</small>
-                                    <div class="position-absolute top-0 end-0 m-2">
-                                        <button class="btn btn-sm btn-outline-warning me-1">
-                                            <i class="fas fa-edit"></i>
-                                        </button>
-                                        <button class="btn btn-sm btn-outline-danger">
-                                            <i class="fas fa-trash"></i>
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-6 mb-3">
-                                <div class="partner-item bg-light p-3 rounded text-center position-relative">
-                                    <img src="https://via.placeholder.com/120x80?text=CEDEAO" class="img-fluid mb-2" alt="CEDEAO">
-                                    <h6 class="small fw-bold">CEDEAO</h6>
-                                    <small class="text-muted">Stratégique</small>
-                                    <div class="position-absolute top-0 end-0 m-2">
-                                        <button class="btn btn-sm btn-outline-warning me-1">
-                                            <i class="fas fa-edit"></i>
-                                        </button>
-                                        <button class="btn btn-sm btn-outline-danger">
-                                            <i class="fas fa-trash"></i>
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                    <div class="form-group">
+                        <label class="form-label">Type de partenariat</label>
+                        <select class="form-control" name="type" required>
+                            <option value="">Choisir un type</option>
+                            <option value="institutional">Institutionnel</option>
+                            <option value="financial">Financier</option>
+                            <option value="technical">Technique</option>
+                            <option value="strategic">Stratégique</option>
+                        </select>
                     </div>
-                </div>
+                    <div class="form-group">
+                        <label class="form-label">Site web</label>
+                        <input type="url" class="form-control" name="website" placeholder="https://exemple.com" />
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Description</label>
+                        <textarea class="form-control" name="description" rows="3"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Logo</label>
+                        <input type="file" class="form-control" name="logo" accept="image/*" onchange="previewPartnerLogo(this)" />
+                        <small class="text-muted">Format recommandé: PNG transparent, 300x200px</small>
+                    </div>
+                    <div id="partnerLogoPreview" class="mt-3"></div>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-plus me-2"></i>Ajouter le partenaire
+                    </button>
+                </form>
             </div>
-        </section>
+        </div>
+        <div class="col-lg-6">
+            <div class="form-card">
+                <h5 class="mb-3">Partenaires actuels</h5>
+                <div class="row" id="partnersList">
+                    <!-- Liste des partenaires dynamique à insérer ici -->
+                </div> <!-- fin row -->
+            </div>
+        </div>
+    </div>
+</section>
+
+
         <!-- Settings Section -->
         <section id="settings" class="content-section">
             <div class="section-header">
@@ -1093,6 +926,7 @@
             </div>
         </section>
     </div>
+
     <!-- Bootstrap JS Bundle with Popper -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
 </body>
