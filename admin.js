@@ -14,7 +14,7 @@
             });
             // Show selected section
             document.getElementById(sectionId).classList.add('active');
-            // Update active menu item
+            // aUpdate active menu item
             document.querySelectorAll('.menu-item').forEach(item => {
                 item.classList.remove('active');
             });
