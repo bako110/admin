@@ -1,37 +1,57 @@
-
-
-// Afficher un aperçu de l'image sélectionnée
-function previewImage(input) {
+// Aperçu d'image ou vidéo
+function previewMedia(input) {
   const preview = document.getElementById('imagePreview');
   preview.innerHTML = ''; // vide l'aperçu précédent
   if (input.files && input.files[0]) {
+    const file = input.files[0];
     const reader = new FileReader();
+
     reader.onload = function(e) {
-      const img = document.createElement('img');
-      img.src = e.target.result;
-      img.style.maxWidth = '300px';
-      img.style.maxHeight = '200px';
-      preview.appendChild(img);
+      const fileType = file.type;
+
+      if (fileType.startsWith('image/')) {
+        const img = document.createElement('img');
+        img.src = e.target.result;
+        img.style.maxWidth = '300px';
+        img.style.maxHeight = '200px';
+        preview.appendChild(img);
+      }
+      else if (fileType.startsWith('video/')) {
+        const video = document.createElement('video');
+        video.src = e.target.result;
+        video.controls = true;
+        video.style.maxWidth = '300px';
+        video.style.maxHeight = '200px';
+        preview.appendChild(video);
+      }
+      else {
+        preview.innerHTML = '<p>Type de fichier non supporté.</p>';
+      }
     };
-    reader.readAsDataURL(input.files[0]);
+
+    reader.readAsDataURL(file);
   }
 }
 
-// Gestion de la soumission du formulaire galerie
+// Fonction utilitaire pour détecter si c’est une vidéo (par extension)
+function isVideo(url) {
+  const videoExtensions = ['.mp4', '.webm', '.ogg', '.mov', '.avi', '.mkv'];
+  return videoExtensions.some(ext => url.toLowerCase().endsWith(ext));
+}
+
+// Soumission du formulaire galerie
 document.getElementById('galleryForm').addEventListener('submit', async function(e) {
   e.preventDefault();
   const form = e.target;
   const formData = new FormData();
 
-  // Récupérer les champs texte
   formData.append('title', form.title.value);
   formData.append('category', form.category.value);
   formData.append('description', form.description.value);
 
-  // Récupérer le fichier image
   const fileInput = form.querySelector('input[type="file"]');
   if (fileInput.files.length > 0) {
-    formData.append('image', fileInput.files[0]);
+    formData.append('media', fileInput.files[0]); // image ou vidéo
   }
 
   try {
@@ -43,12 +63,12 @@ document.getElementById('galleryForm').addEventListener('submit', async function
     const result = await res.json();
 
     if (res.ok) {
-      alert('Image ajoutée à la galerie avec succès !');
+      alert('Fichier ajouté à la galerie avec succès !');
       form.reset();
       document.getElementById('imagePreview').innerHTML = '';
-      loadGalleryItems();  // rafraîchit la galerie
+      loadGalleryItems();
     } else {
-      alert('Erreur : ' + (result.error || 'Impossible d\'ajouter l\'image'));
+      alert('Erreur : ' + (result.error || 'Impossible d\'ajouter le fichier'));
     }
   } catch (err) {
     alert('Erreur réseau ou serveur');
@@ -56,7 +76,7 @@ document.getElementById('galleryForm').addEventListener('submit', async function
   }
 });
 
-// Exemple simple pour charger les images depuis le backend (à adapter)
+// Charger la galerie
 async function loadGalleryItems() {
   try {
     const res = await fetch(`${API_URL}/api/gallery`);
@@ -70,13 +90,19 @@ async function loadGalleryItems() {
       const div = document.createElement('div');
       div.classList.add('gallery-item');
 
-      // Construire chemin image complet, adapte selon backend
-      const imgSrc = item.imageUrl
-        ? `${API_URL}${item.imageUrl}`  // note : pas de '/' car imageUrl commence par '/'
-        : 'https://via.placeholder.com/200x150?text=Image+indisponible';
+      let mediaHtml = '';
+      if (item.imageUrl) {
+        if (isVideo(item.imageUrl)) {
+          mediaHtml = `<video src="${API_URL}${item.imageUrl}" controls style="max-width:100%; max-height:200px;"></video>`;
+        } else {
+          mediaHtml = `<img src="${API_URL}${item.imageUrl}" alt="${item.title}" style="max-width:100%; max-height:200px;">`;
+        }
+      } else {
+        mediaHtml = '<img src="https://via.placeholder.com/200x150?text=Indisponible">';
+      }
 
       div.innerHTML = `
-        <img src="${imgSrc}" alt="${item.title}">
+        ${mediaHtml}
         <div class="gallery-item-actions">
           <button class="action-btn bg-warning text-dark" onclick="editGalleryItem('${item._id}')">
             <i class="fas fa-edit"></i>
@@ -97,11 +123,11 @@ async function loadGalleryItems() {
   }
 }
 
-// Modifier un élément de la galerie (exemple simple : pré-remplit le formulaire)
+// Modifier un élément
 async function editGalleryItem(id) {
   try {
     const res = await fetch(`${API_URL}/api/gallery/${id}`);
-    if (!res.ok) throw new Error('Erreur chargement de l\'image');
+    if (!res.ok) throw new Error('Erreur chargement du fichier');
     const item = await res.json();
 
     const form = document.getElementById('galleryForm');
@@ -109,18 +135,25 @@ async function editGalleryItem(id) {
     form.category.value = item.category;
     form.description.value = item.description || '';
 
-    // Affiche l'image actuelle dans l'aperçu
     const preview = document.getElementById('imagePreview');
     preview.innerHTML = '';
     if (item.imageUrl) {
-      const img = document.createElement('img');
-      img.src = `${API_URL}${item.imageUrl}`;
-      img.style.maxWidth = '300px';
-      img.style.maxHeight = '200px';
-      preview.appendChild(img);
+      if (isVideo(item.imageUrl)) {
+        const video = document.createElement('video');
+        video.src = `${API_URL}${item.imageUrl}`;
+        video.controls = true;
+        video.style.maxWidth = '300px';
+        video.style.maxHeight = '200px';
+        preview.appendChild(video);
+      } else {
+        const img = document.createElement('img');
+        img.src = `${API_URL}${item.imageUrl}`;
+        img.style.maxWidth = '300px';
+        img.style.maxHeight = '200px';
+        preview.appendChild(img);
+      }
     }
 
-    // Remplacer la fonction submit pour faire un update
     form.onsubmit = async function(e) {
       e.preventDefault();
 
@@ -131,7 +164,7 @@ async function editGalleryItem(id) {
 
       const fileInput = form.querySelector('input[type="file"]');
       if (fileInput.files.length > 0) {
-        formData.append('image', fileInput.files[0]);
+        formData.append('media', fileInput.files[0]);
       }
 
       try {
@@ -142,16 +175,14 @@ async function editGalleryItem(id) {
         const result = await updateRes.json();
 
         if (updateRes.ok) {
-          alert('Image mise à jour avec succès !');
+          alert('Fichier mis à jour avec succès !');
           form.reset();
           preview.innerHTML = '';
           loadGalleryItems();
-
-          // Remet le comportement original du formulaire
           form.onsubmit = null;
           form.addEventListener('submit', galleryFormSubmitHandler);
         } else {
-          alert('Erreur : ' + (result.error || 'Impossible de mettre à jour l\'image'));
+          alert('Erreur : ' + (result.error || 'Impossible de mettre à jour le fichier'));
         }
       } catch (err) {
         alert('Erreur réseau ou serveur');
@@ -160,14 +191,14 @@ async function editGalleryItem(id) {
     };
 
   } catch (err) {
-    alert('Erreur chargement image');
+    alert('Erreur chargement fichier');
     console.error(err);
   }
 }
 
-// Suppression d'un élément de la galerie
+// Suppression
 async function deleteGalleryItem(id) {
-  if (!confirm('Êtes-vous sûr de vouloir supprimer cette image ?')) return;
+  if (!confirm('Êtes-vous sûr de vouloir supprimer ce fichier ?')) return;
 
   try {
     const res = await fetch(`${API_URL}/api/gallery/${id}`, {
@@ -175,11 +206,11 @@ async function deleteGalleryItem(id) {
     });
 
     if (res.ok) {
-      alert('Image supprimée avec succès !');
+      alert('Fichier supprimé avec succès !');
       loadGalleryItems();
     } else {
       const result = await res.json();
-      alert('Erreur : ' + (result.error || 'Impossible de supprimer l\'image'));
+      alert('Erreur : ' + (result.error || 'Impossible de supprimer le fichier'));
     }
   } catch (err) {
     alert('Erreur réseau ou serveur');
@@ -187,13 +218,10 @@ async function deleteGalleryItem(id) {
   }
 }
 
-// Garde le handler d'origine pour la soumission du formulaire (pour le reset après edition)
+// Handler d'origine
 function galleryFormSubmitHandler(e) {
   e.preventDefault();
-  // Replacer par ton code initial de soumission du formulaire
-  // Ou ré-appeler la fonction initiale que tu as
 }
 
-
-// Appel initial pour afficher la galerie
+// Chargement initial
 window.addEventListener('DOMContentLoaded', loadGalleryItems);
