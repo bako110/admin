@@ -1,6 +1,4 @@
-
-
-// Fonction pour prévisualiser le logo sélectionné
+// Fonction pour prévisualiser le logo sélectionné ou existant
 function previewPartnerLogo(input) {
   const preview = document.getElementById('partnerLogoPreview');
   preview.innerHTML = '';
@@ -8,7 +6,7 @@ function previewPartnerLogo(input) {
     const reader = new FileReader();
     reader.onload = function(e) {
       const img = document.createElement('img');
-      img.src = e.target.result;
+      img.src = e.target.result; // prévisualisation du fichier local
       img.style.maxWidth = '300px';
       img.style.maxHeight = '200px';
       preview.appendChild(img);
@@ -25,9 +23,8 @@ async function loadPartners() {
     const partners = await res.json();
 
     const partnersList = document.getElementById('partnersList');
-    partnersList.innerHTML = ''; // vide la liste avant de remplir
+    partnersList.innerHTML = '';
 
-    // Si pas assez d'éléments, remplir avec des cases vides pour garder la structure
     const maxPartnersToShow = 4;
     for(let i = 0; i < maxPartnersToShow; i++) {
       const partner = partners[i];
@@ -39,9 +36,9 @@ async function loadPartners() {
       partnerItem.className = 'partner-item bg-light p-3 rounded text-center position-relative';
 
       if (partner) {
-        // Affichage réel
+        const logoUrl = partner.logoUrl || '';
         partnerItem.innerHTML = `
-          <img src="${API_URL}${partner.logoUrl}" class="img-fluid mb-2" alt="${partner.name}">
+          <img src="${logoUrl}" class="img-fluid mb-2" alt="${partner.name}">
           <h6 class="small fw-bold">${partner.name}</h6>
           <small class="text-muted">${capitalize(partner.type)}</small>
           <div class="position-absolute top-0 end-0 m-2">
@@ -54,7 +51,6 @@ async function loadPartners() {
           </div>
         `;
       } else {
-        // Case vide pour garder la place
         partnerItem.innerHTML = `
           <img src="" class="img-fluid mb-2" alt="">
           <h6 class="small fw-bold">&nbsp;</h6>
@@ -73,12 +69,12 @@ async function loadPartners() {
   }
 }
 
-// Capitaliser la première lettre (aide pour type affiché)
+// Capitaliser la première lettre
 function capitalize(str) {
   return str.charAt(0).toUpperCase() + str.slice(1);
 }
 
-// Réinitialise le formulaire à l’état "ajout"
+// Réinitialiser le formulaire
 function resetForm() {
   const form = document.getElementById('partnerForm');
   form.reset();
@@ -86,7 +82,7 @@ function resetForm() {
   form.onsubmit = submitNewPartner;
 }
 
-// Gestion de l’ajout d’un nouveau partenaire
+// Ajout d’un partenaire
 async function submitNewPartner(event) {
   event.preventDefault();
   const form = event.target;
@@ -97,7 +93,6 @@ async function submitNewPartner(event) {
       method: 'POST',
       body: formData,
     });
-
     const result = await res.json();
     if (res.ok) {
       alert('Partenaire ajouté avec succès');
@@ -112,7 +107,7 @@ async function submitNewPartner(event) {
   }
 }
 
-// Charger un partenaire dans le formulaire pour édition
+// Éditer un partenaire
 async function editPartner(id) {
   try {
     const res = await fetch(`${API_URL}/api/partners/${id}`);
@@ -125,18 +120,17 @@ async function editPartner(id) {
     form.website.value = partner.website || '';
     form.description.value = partner.description || '';
 
-    // Affiche logo dans la prévisualisation
+    // Prévisualisation du logo Cloudinary
     const preview = document.getElementById('partnerLogoPreview');
     preview.innerHTML = '';
     if (partner.logoUrl) {
       const img = document.createElement('img');
-      img.src = `${API_URL}${partner.logoUrl}`;
+      img.src = partner.logoUrl;
       img.style.maxWidth = '300px';
       img.style.maxHeight = '200px';
       preview.appendChild(img);
     }
 
-    // Remplace la fonction submit par mise à jour
     form.onsubmit = async (e) => {
       e.preventDefault();
       const formData = new FormData(form);
@@ -147,7 +141,6 @@ async function editPartner(id) {
           body: formData,
         });
         const result = await updateRes.json();
-
         if (updateRes.ok) {
           alert('Partenaire mis à jour avec succès');
           resetForm();
@@ -172,10 +165,7 @@ async function deletePartner(id) {
   if (!confirm('Confirmez-vous la suppression de ce partenaire ?')) return;
 
   try {
-    const res = await fetch(`${API_URL}/api/partners/${id}`, {
-      method: 'DELETE',
-    });
-
+    const res = await fetch(`${API_URL}/api/partners/${id}`, { method: 'DELETE' });
     if (res.ok) {
       alert('Partenaire supprimé');
       loadPartners();
@@ -189,9 +179,14 @@ async function deletePartner(id) {
   }
 }
 
-// Initialisation : attach submit handler et charge les partenaires
+// Initialisation
 window.addEventListener('DOMContentLoaded', () => {
   const form = document.getElementById('partnerForm');
   form.onsubmit = submitNewPartner;
   loadPartners();
+});
+
+// Ajouter un listener pour prévisualisation live du fichier sélectionné
+document.getElementById('partnerLogo').addEventListener('change', function() {
+  previewPartnerLogo(this);
 });

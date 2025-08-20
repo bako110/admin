@@ -33,14 +33,14 @@ function previewMedia(input) {
   }
 }
 
-// Fonction utilitaire pour détecter si c’est une vidéo (par extension)
+// Détection si c’est une vidéo (par extension)
 function isVideo(url) {
   const videoExtensions = ['.mp4', '.webm', '.ogg', '.mov', '.avi', '.mkv'];
   return videoExtensions.some(ext => url.toLowerCase().endsWith(ext));
 }
 
 // Soumission du formulaire galerie
-document.getElementById('galleryForm').addEventListener('submit', async function(e) {
+async function galleryFormSubmitHandler(e) {
   e.preventDefault();
   const form = e.target;
   const formData = new FormData();
@@ -51,7 +51,7 @@ document.getElementById('galleryForm').addEventListener('submit', async function
 
   const fileInput = form.querySelector('input[type="file"]');
   if (fileInput.files.length > 0) {
-    formData.append('media', fileInput.files[0]); // image ou vidéo
+    formData.append('media', fileInput.files[0]);
   }
 
   try {
@@ -74,7 +74,7 @@ document.getElementById('galleryForm').addEventListener('submit', async function
     alert('Erreur réseau ou serveur');
     console.error(err);
   }
-});
+}
 
 // Charger la galerie
 async function loadGalleryItems() {
@@ -93,9 +93,9 @@ async function loadGalleryItems() {
       let mediaHtml = '';
       if (item.imageUrl) {
         if (isVideo(item.imageUrl)) {
-          mediaHtml = `<video src="${API_URL}${item.imageUrl}" controls style="max-width:100%; max-height:200px;"></video>`;
+          mediaHtml = `<video src="${item.imageUrl}" controls style="max-width:100%; max-height:200px;"></video>`;
         } else {
-          mediaHtml = `<img src="${API_URL}${item.imageUrl}" alt="${item.title}" style="max-width:100%; max-height:200px;">`;
+          mediaHtml = `<img src="${item.imageUrl}" alt="${item.title}" style="max-width:100%; max-height:200px;">`;
         }
       } else {
         mediaHtml = '<img src="https://via.placeholder.com/200x150?text=Indisponible">';
@@ -140,14 +140,14 @@ async function editGalleryItem(id) {
     if (item.imageUrl) {
       if (isVideo(item.imageUrl)) {
         const video = document.createElement('video');
-        video.src = `${API_URL}${item.imageUrl}`;
+        video.src = item.imageUrl;
         video.controls = true;
         video.style.maxWidth = '300px';
         video.style.maxHeight = '200px';
         preview.appendChild(video);
       } else {
         const img = document.createElement('img');
-        img.src = `${API_URL}${item.imageUrl}`;
+        img.src = item.imageUrl;
         img.style.maxWidth = '300px';
         img.style.maxHeight = '200px';
         preview.appendChild(img);
@@ -179,8 +179,7 @@ async function editGalleryItem(id) {
           form.reset();
           preview.innerHTML = '';
           loadGalleryItems();
-          form.onsubmit = null;
-          form.addEventListener('submit', galleryFormSubmitHandler);
+          form.onsubmit = galleryFormSubmitHandler;
         } else {
           alert('Erreur : ' + (result.error || 'Impossible de mettre à jour le fichier'));
         }
@@ -218,10 +217,6 @@ async function deleteGalleryItem(id) {
   }
 }
 
-// Handler d'origine
-function galleryFormSubmitHandler(e) {
-  e.preventDefault();
-}
-
-// Chargement initial
+// Initialisation
+document.getElementById('galleryForm').addEventListener('submit', galleryFormSubmitHandler);
 window.addEventListener('DOMContentLoaded', loadGalleryItems);
