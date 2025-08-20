@@ -13,6 +13,7 @@ function formatDate(dateStr) {
 // Aperçu de l'image/vidéo sélectionnée
 function previewEventMedia(input) {
   const preview = document.getElementById('eventMediaPreview');
+  if (!preview) return;
   preview.innerHTML = '';
   if (input.files && input.files[0]) {
     const file = input.files[0];
@@ -20,7 +21,6 @@ function previewEventMedia(input) {
 
     reader.onload = function(e) {
       const fileType = file.type;
-
       if (fileType.startsWith('image/')) {
         const img = document.createElement('img');
         img.src = e.target.result;
@@ -47,6 +47,56 @@ function isVideo(url) {
   return videoExtensions.some(ext => url.toLowerCase().endsWith(ext));
 }
 
+// Chargement initial après que le DOM soit prêt
+window.addEventListener('DOMContentLoaded', () => {
+  const eventForm = document.getElementById('eventForm');
+  const eventImage = document.getElementById('eventImage');
+
+  // Ajouter listener pour soumission formulaire
+  if (eventForm) {
+    eventForm.addEventListener('submit', async function(e) {
+      e.preventDefault();
+      const formData = new FormData(eventForm);
+
+      try {
+        let res;
+        if (!currentEditId) {
+          res = await fetch(`${API_URL}/api/events`, { method: 'POST', body: formData });
+        } else {
+          res = await fetch(`${API_URL}/api/events/${currentEditId}`, { method: 'PUT', body: formData });
+        }
+
+        const result = await res.json();
+
+        if (res.ok) {
+          alert(currentEditId ? 'Événement mis à jour !' : 'Événement créé !');
+          eventForm.reset();
+          const preview = document.getElementById('eventMediaPreview');
+          if (preview) preview.innerHTML = '';
+          currentEditId = null;
+          eventForm.querySelector('button[type="submit"]').textContent = "Créer l'événement";
+          loadEvents();
+        } else {
+          alert('Erreur : ' + (result.error || 'Impossible de traiter l\'événement'));
+        }
+      } catch (err) {
+        console.error(err);
+        alert('Erreur réseau ou serveur');
+      }
+    });
+  }
+
+  // Ajouter listener pour prévisualisation image/vidéo
+  if (eventImage) {
+    eventImage.addEventListener('change', function() {
+      previewEventMedia(this);
+    });
+  }
+
+  // Charger les événements initialement
+  loadEvents();
+});
+
 // Affiche la liste des événements
 async function loadEvents() {
   try {
@@ -55,6 +105,7 @@ async function loadEvents() {
     const events = await res.json();
 
     const tbody = document.querySelector('#eventsTable tbody');
+    if (!tbody) return;
     tbody.innerHTML = '';
 
     events.forEach(event => {
@@ -80,7 +131,6 @@ async function loadEvents() {
           </button>
         </td>
       `;
-
       tbody.appendChild(tr);
     });
   } catch (err) {
@@ -88,44 +138,6 @@ async function loadEvents() {
     alert('Erreur lors du chargement des événements.');
   }
 }
-
-// Soumission du formulaire
-document.getElementById('eventForm').addEventListener('submit', async function(e) {
-  e.preventDefault();
-  const form = e.target;
-  const formData = new FormData(form);
-
-  try {
-    let res;
-    if (!currentEditId) {
-      res = await fetch(`${API_URL}/api/events`, {
-        method: 'POST',
-        body: formData,
-      });
-    } else {
-      res = await fetch(`${API_URL}/api/events/${currentEditId}`, {
-        method: 'PUT',
-        body: formData,
-      });
-    }
-
-    const result = await res.json();
-
-    if (res.ok) {
-      alert(currentEditId ? 'Événement mis à jour avec succès !' : 'Événement créé avec succès !');
-      form.reset();
-      document.getElementById('eventMediaPreview').innerHTML = '';
-      currentEditId = null;
-      document.querySelector('#eventForm button[type="submit"]').textContent = "Créer l'événement";
-      loadEvents();
-    } else {
-      alert('Erreur : ' + (result.error || 'Impossible de traiter l\'événement'));
-    }
-  } catch (err) {
-    alert('Erreur réseau ou serveur');
-    console.error(err);
-  }
-});
 
 // Suppression d'un événement
 async function deleteEvent(id) {
@@ -139,12 +151,12 @@ async function deleteEvent(id) {
       alert('Erreur lors de la suppression');
     }
   } catch (err) {
-    alert('Erreur réseau ou serveur');
     console.error(err);
+    alert('Erreur réseau ou serveur');
   }
 }
 
-// Édition d’un événement avec prévisualisation média Cloudinary
+// Édition d’un événement
 async function editEvent(id) {
   try {
     const res = await fetch(`${API_URL}/api/events/${id}`);
@@ -152,45 +164,39 @@ async function editEvent(id) {
     const event = await res.json();
 
     const form = document.getElementById('eventForm');
+    if (!form) return;
+
     form.title.value = event.title || '';
     form.date.value = event.date ? event.date.substring(0, 10) : '';
     form.location.value = event.location || '';
     form.description.value = event.description || '';
     form.status.value = event.status || 'upcoming';
 
-    // Prévisualisation média existant
     const preview = document.getElementById('eventMediaPreview');
-    preview.innerHTML = '';
-    if (event.image) {
-      if (isVideo(event.image)) {
-        const video = document.createElement('video');
-        video.src = event.image;
-        video.controls = true;
-        video.style.maxWidth = '300px';
-        video.style.maxHeight = '200px';
-        preview.appendChild(video);
-      } else {
-        const img = document.createElement('img');
-        img.src = event.image;
-        img.style.maxWidth = '300px';
-        img.style.maxHeight = '200px';
-        preview.appendChild(img);
+    if (preview) {
+      preview.innerHTML = '';
+      if (event.image) {
+        if (isVideo(event.image)) {
+          const video = document.createElement('video');
+          video.src = event.image;
+          video.controls = true;
+          video.style.maxWidth = '300px';
+          video.style.maxHeight = '200px';
+          preview.appendChild(video);
+        } else {
+          const img = document.createElement('img');
+          img.src = event.image;
+          img.style.maxWidth = '300px';
+          img.style.maxHeight = '200px';
+          preview.appendChild(img);
+        }
       }
     }
 
     currentEditId = id;
-    document.querySelector('#eventForm button[type="submit"]').textContent = "Mettre à jour l'événement";
-
+    form.querySelector('button[type="submit"]').textContent = "Mettre à jour l'événement";
   } catch (err) {
-    alert(err.message);
     console.error(err);
+    alert(err.message);
   }
 }
-
-// Prévisualisation live du fichier sélectionné
-document.getElementById('eventImage').addEventListener('change', function() {
-  previewEventMedia(this);
-});
-
-// Chargement initial
-window.addEventListener('DOMContentLoaded', loadEvents);
