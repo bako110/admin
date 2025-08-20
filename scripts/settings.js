@@ -47,7 +47,7 @@ document.getElementById("securityForm").addEventListener("submit", function (e) 
 document.getElementById("addAdminForm").addEventListener("submit", function (e) {
     e.preventDefault();
     const formData = Object.fromEntries(new FormData(this).entries());
-    sendData(`${API_URL}/admins`, "POST", formData);
+    sendData(`${API_URL}/api/admins`, "POST", formData);
 });
 
 // Formulaire logo
