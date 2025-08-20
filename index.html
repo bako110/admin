@@ -695,100 +695,129 @@
             </section>
 
             <!-- Settings Section -->
-            <section id="settings" class="content-section">
-                <div class="section-header">
-                    <h2>Paramètres</h2>
-                    <p>Configuration générale du site et de l'administration</p>
-                </div>
-                <div class="row">
-                    <div class="col-lg-8">
-                        <div class="form-card">
-                            <h5 class="mb-3">Informations générales</h5>
-                            <form id="settingsForm">
-                                <div class="row">
-                                    <div class="col-md-6">
-                                        <div class="form-group">
-                                            <label class="form-label">Nom de l'association</label>
-                                            <input type="text" class="form-control" value="APCDD" required />
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <div class="form-group">
-                                            <label class="form-label">Sigle</label>
-                                            <input type="text" class="form-control" value="APCDD" required />
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <label class="form-label">Adresse</label>
-                                    <input type="text" class="form-control" value="123 Avenue de la Culture, Ouagadougou" required />
-                                </div>
-                                <div class="row">
-                                    <div class="col-md-6">
-                                        <div class="form-group">
-                                            <label class="form-label">Téléphone</label>
-                                            <input type="tel" class="form-control" value="+226 25 30 12 34" required />
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <div class="form-group">
-                                            <label class="form-label">Email</label>
-                                            <input type="email" class="form-control" value="contact@apcdd.org" required />
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <label class="form-label">Description courte</label>
-                                    <textarea class="form-control" rows="3" required>L'Association pour la Promotion de la Culture et du Développement Durable œuvre pour un avenir où la richesse culturelle africaine et la préservation environnementale se conjuguent harmonieusement.</textarea>
-                                </div>
-                                <button type="submit" class="btn btn-primary">
-                                    <i class="fas fa-save me-2"></i>Enregistrer les modifications
-                                </button>
-                            </form>
+<section id="settings" class="content-section">
+    <div class="section-header">
+        <h2>Paramètres</h2>
+        <p>Configuration générale du site et de l'administration</p>
+    </div>
+    <div class="row">
+        <div class="col-lg-8">
+            <!-- Informations générales -->
+            <div class="form-card">
+                <h5 class="mb-3">Informations générales</h5>
+                <form id="settingsForm">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label class="form-label">Nom de l'association</label>
+                                <input type="text" class="form-control" name="associationName" required />
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label class="form-label">Sigle</label>
+                                <input type="text" class="form-control" name="sigle" required />
+                            </div>
                         </div>
                     </div>
-                    <div class="col-lg-4">
-                        <div class="form-card">
-                            <h5 class="mb-3">Sécurité</h5>
-                            <form id="securityForm">
-                                <div class="form-group">
-                                    <label class="form-label">Mot de passe actuel</label>
-                                    <input type="password" class="form-control" required />
-                                </div>
-                                <div class="form-group">
-                                    <label class="form-label">Nouveau mot de passe</label>
-                                    <input type="password" class="form-control" required />
-                                </div>
-                                <div class="form-group">
-                                    <label class="form-label">Confirmer le nouveau mot de passe</label>
-                                    <input type="password" class="form-control" required />
-                                </div>
-                                <button type="submit" class="btn btn-warning">
-                                    <i class="fas fa-lock me-2"></i>Changer le mot de passe
-                                </button>
-                            </form>
+                    <div class="form-group">
+                        <label class="form-label">Adresse</label>
+                        <input type="text" class="form-control" name="address" required />
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label class="form-label">Téléphone</label>
+                                <input type="tel" class="form-control" name="phone" required />
+                            </div>
                         </div>
-                        <div class="form-card mt-4">
-                            <h5 class="mb-3">Logo du site</h5>
-                            <form id="logoForm">
-                                <div class="form-group">
-                                    <label class="form-label">Logo principal</label>
-                                    <input type="file" class="form-control" accept="image/*" />
-                                    <small class="text-muted">Format recommandé: PNG transparent, 200x100px</small>
-                                </div>
-                                <div class="form-group">
-                                    <label class="form-label">Favicon</label>
-                                    <input type="file" class="form-control" accept="image/*" />
-                                    <small class="text-muted">Format: ICO ou PNG, 32x32px</small>
-                                </div>
-                                <button type="submit" class="btn btn-primary">
-                                    <i class="fas fa-upload me-2"></i>Mettre à jour
-                                </button>
-                            </form>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label class="form-label">Email</label>
+                                <input type="email" class="form-control" name="email" required />
+                            </div>
                         </div>
                     </div>
-                </div>
-            </section>
+                    <div class="form-group">
+                        <label class="form-label">Description courte</label>
+                        <textarea class="form-control" name="description" rows="3" required></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save me-2"></i>Enregistrer les modifications
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <!-- Sécurité -->
+            <div class="form-card">
+                <h5 class="mb-3">Sécurité</h5>
+                <form id="securityForm">
+                    <div class="form-group">
+                        <label class="form-label">Mot de passe actuel</label>
+                        <input type="password" class="form-control" name="currentPassword" required />
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Nouveau mot de passe</label>
+                        <input type="password" class="form-control" name="newPassword" required />
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Confirmer le nouveau mot de passe</label>
+                        <input type="password" class="form-control" name="confirmPassword" required />
+                    </div>
+                    <button type="submit" class="btn btn-warning">
+                        <i class="fas fa-lock me-2"></i>Changer le mot de passe
+                    </button>
+                </form>
+            </div>
+
+            <!-- Ajouter un administrateur -->
+            <div class="form-card mt-4">
+                <h5 class="mb-3">Ajouter un administrateur</h5>
+                <form id="addAdminForm">
+                    <div class="form-group">
+                        <label class="form-label">Nom complet</label>
+                        <input type="text" class="form-control" name="name" required />
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Email</label>
+                        <input type="email" class="form-control" name="email" required />
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Mot de passe</label>
+                        <input type="password" class="form-control" name="password" required />
+                    </div>
+                    <button type="submit" class="btn btn-success">
+                        <i class="fas fa-user-plus me-2"></i>Créer un administrateur
+                    </button>
+                </form>
+            </div>
+
+            <!-- Logo -->
+            <div class="form-card mt-4">
+                <h5 class="mb-3">Logo du site</h5>
+                <form id="logoForm" enctype="multipart/form-data">
+                    <div class="form-group">
+                        <label class="form-label">Logo principal</label>
+                        <input type="file" class="form-control" name="logo" accept="image/*" />
+                        <small class="text-muted">Format recommandé: PNG transparent, 200x100px</small>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Favicon</label>
+                        <input type="file" class="form-control" name="favicon" accept="image/*" />
+                        <small class="text-muted">Format: ICO ou PNG, 32x32px</small>
+                    </div>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-upload me-2"></i>Mettre à jour
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+
+
         </div>
 
         <!-- Bootstrap JS Bundle with Popper -->
