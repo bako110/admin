@@ -2,11 +2,13 @@
 function previewPartnerLogo(input) {
   const preview = document.getElementById('partnerLogoPreview');
   preview.innerHTML = '';
+
+  // Si un nouveau fichier est sélectionné
   if (input.files && input.files[0]) {
     const reader = new FileReader();
     reader.onload = function(e) {
       const img = document.createElement('img');
-      img.src = e.target.result; // prévisualisation du fichier local
+      img.src = e.target.result; // prévisualisation locale
       img.style.maxWidth = '300px';
       img.style.maxHeight = '200px';
       preview.appendChild(img);
@@ -15,7 +17,7 @@ function previewPartnerLogo(input) {
   }
 }
 
-// Charger et afficher les partenaires dans la grille
+// Charger et afficher les partenaires
 async function loadPartners() {
   try {
     const res = await fetch(`${API_URL}/api/partners`);
@@ -26,9 +28,8 @@ async function loadPartners() {
     partnersList.innerHTML = '';
 
     const maxPartnersToShow = 4;
-    for(let i = 0; i < maxPartnersToShow; i++) {
+    for (let i = 0; i < maxPartnersToShow; i++) {
       const partner = partners[i];
-
       const col = document.createElement('div');
       col.className = 'col-6 mb-3';
 
@@ -82,7 +83,7 @@ function resetForm() {
   form.onsubmit = submitNewPartner;
 }
 
-// Ajout d’un partenaire
+// Ajouter un partenaire
 async function submitNewPartner(event) {
   event.preventDefault();
   const form = event.target;
@@ -120,7 +121,7 @@ async function editPartner(id) {
     form.website.value = partner.website || '';
     form.description.value = partner.description || '';
 
-    // Prévisualisation du logo Cloudinary
+    // Prévisualisation du logo existant
     const preview = document.getElementById('partnerLogoPreview');
     preview.innerHTML = '';
     if (partner.logoUrl) {
@@ -134,7 +135,6 @@ async function editPartner(id) {
     form.onsubmit = async (e) => {
       e.preventDefault();
       const formData = new FormData(form);
-
       try {
         const updateRes = await fetch(`${API_URL}/api/partners/${id}`, {
           method: 'PUT',
@@ -183,10 +183,14 @@ async function deletePartner(id) {
 window.addEventListener('DOMContentLoaded', () => {
   const form = document.getElementById('partnerForm');
   form.onsubmit = submitNewPartner;
-  loadPartners();
-});
 
-// Ajouter un listener pour prévisualisation live du fichier sélectionné
-document.getElementById('partnerLogo').addEventListener('change', function() {
-  previewPartnerLogo(this);
+  // Assure que l'input a bien l'ID "partnerLogo"
+  const logoInput = document.getElementById('partnerLogo');
+  if (logoInput) {
+    logoInput.addEventListener('change', function() {
+      previewPartnerLogo(this);
+    });
+  }
+
+  loadPartners();
 });
