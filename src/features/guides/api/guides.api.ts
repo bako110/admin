@@ -34,3 +34,13 @@ export async function verifyGuide(id: string, isVerified: boolean) {
   const { data } = await apiClient.post(`/guides/${id}/verify`, null, { params: { is_verified: isVerified } });
   return data;
 }
+
+export async function approveGuide(id: string): Promise<GuideDetail> {
+  const { data } = await apiClient.post<GuideDetail>(`/guides/${id}/approve`);
+  return data;
+}
+
+export async function rejectGuide(id: string, reason: string): Promise<GuideDetail> {
+  const { data } = await apiClient.post<GuideDetail>(`/guides/${id}/reject`, { reason });
+  return data;
+}

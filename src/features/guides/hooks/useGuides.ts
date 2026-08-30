@@ -1,6 +1,15 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 
-import { fetchGuides, fetchGuide, createGuide, updateGuide, deleteGuide, verifyGuide } from '../api/guides.api';
+import {
+  fetchGuides,
+  fetchGuide,
+  createGuide,
+  updateGuide,
+  deleteGuide,
+  verifyGuide,
+  approveGuide,
+  rejectGuide,
+} from '../api/guides.api';
 import type { UpdateGuidePayload } from '../types';
 
 export function useGuides(page = 1, pageSize = 20) {
@@ -47,5 +56,27 @@ export function useVerifyGuide() {
   return useMutation({
     mutationFn: ({ id, isVerified }: { id: string; isVerified: boolean }) => verifyGuide(id, isVerified),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['admin-guides'] }),
+  });
+}
+
+export function useApproveGuide() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: approveGuide,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['admin-guides'] });
+      queryClient.invalidateQueries({ queryKey: ['admin-pending-verifications'] });
+    },
+  });
+}
+
+export function useRejectGuide() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ id, reason }: { id: string; reason: string }) => rejectGuide(id, reason),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['admin-guides'] });
+      queryClient.invalidateQueries({ queryKey: ['admin-pending-verifications'] });
+    },
   });
 }

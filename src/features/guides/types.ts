@@ -46,4 +46,5 @@ export interface GuideDetail {
   currency: string;
   is_verified: boolean;
   status: 'pending' | 'active' | 'suspended';
+  rejection_reason?: string;
 }

@@ -14,6 +14,7 @@ import {
   Stethoscope,
   LogOut,
   Shield,
+  ShieldCheck,
 } from 'lucide-react';
 import clsx from 'clsx';
 
@@ -23,6 +24,7 @@ import styles from './AppLayout.module.css';
 
 const NAV_ITEMS = [
   { to: '/dashboard', label: 'Tableau de bord', Icon: LayoutDashboard },
+  { to: '/verification', label: 'Vérifications', Icon: ShieldCheck },
   { to: '/destinations', label: 'Destinations', Icon: Map },
   { to: '/hotels', label: 'Hébergements', Icon: BedDouble },
   { to: '/restaurants', label: 'Restaurants', Icon: UtensilsCrossed },

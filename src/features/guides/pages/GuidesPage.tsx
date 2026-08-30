@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Plus, Star, ImageOff, Trash2, Pencil, ShieldCheck, ShieldOff } from 'lucide-react';
+import { Plus, Star, ImageOff, Trash2, Pencil, ShieldOff, ClipboardCheck } from 'lucide-react';
 
 import { Button, Spinner, EmptyResults, DataTable, Badge, ConfirmDialog } from '../../../shared/ui';
 import type { DataTableColumn } from '../../../shared/ui/DataTable';
@@ -8,6 +8,7 @@ import { extractApiErrorMessage } from '../../../shared/api/client';
 import { useDeleteGuide, useGuides, useVerifyGuide } from '../hooks/useGuides';
 import { CreateGuideModal } from '../components/CreateGuideModal';
 import { EditGuideModal } from '../components/EditGuideModal';
+import { GuideReviewPanel } from '../components/GuideReviewPanel';
 import type { GuideSummary } from '../types';
 import styles from '../../../shared/ui/listPage.module.css';
 import actionStyles from '../../../shared/ui/rowActions.module.css';
@@ -17,6 +18,7 @@ export function GuidesPage() {
   const [page, setPage] = useState(1);
   const [createOpen, setCreateOpen] = useState(false);
   const [editId, setEditId] = useState<string | null>(null);
+  const [reviewId, setReviewId] = useState<string | null>(null);
   const [deleteTarget, setDeleteTarget] = useState<GuideSummary | null>(null);
   const { data, isLoading, isError, refetch } = useGuides(page, 20);
   const { mutate: deleteGuide, isPending: isDeleting } = useDeleteGuide();
@@ -98,18 +100,32 @@ export function GuidesPage() {
       width: '128px',
       render: (row) => (
         <div className={actionStyles.actions}>
-          <button
-            type="button"
-            className={actionStyles.actionButton}
-            title={row.is_verified ? 'Retirer la vérification' : 'Vérifier'}
-            disabled={isVerifying}
-            onClick={(e) => {
-              e.stopPropagation();
-              handleToggleVerify(row);
-            }}
-          >
-            {row.is_verified ? <ShieldOff size={15} strokeWidth={2} /> : <ShieldCheck size={15} strokeWidth={2} />}
-          </button>
+          {row.is_verified ? (
+            <button
+              type="button"
+              className={actionStyles.actionButton}
+              title="Retirer la vérification"
+              disabled={isVerifying}
+              onClick={(e) => {
+                e.stopPropagation();
+                handleToggleVerify(row);
+              }}
+            >
+              <ShieldOff size={15} strokeWidth={2} />
+            </button>
+          ) : (
+            <button
+              type="button"
+              className={actionStyles.actionButton}
+              title="Vérifier le dossier"
+              onClick={(e) => {
+                e.stopPropagation();
+                setReviewId(row.id);
+              }}
+            >
+              <ClipboardCheck size={15} strokeWidth={2} />
+            </button>
+          )}
           <button
             type="button"
             className={actionStyles.actionButton}
@@ -186,6 +202,7 @@ export function GuidesPage() {
 
       <CreateGuideModal open={createOpen} onClose={() => setCreateOpen(false)} />
       <EditGuideModal guideId={editId} onClose={() => setEditId(null)} />
+      <GuideReviewPanel guideId={reviewId} onClose={() => setReviewId(null)} />
       <ConfirmDialog
         open={!!deleteTarget}
         title="Supprimer le guide"
