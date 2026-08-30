@@ -31,7 +31,7 @@ export function GuideReviewPanel({ guideId, onClose }: GuideReviewPanelProps) {
   const [showRejectForm, setShowRejectForm] = useState(false);
   const [reason, setReason] = useState('');
 
-  const documents = (verifications ?? []).filter((v) => v.user_id === guide?.user_id);
+  const documents = (verifications ?? []).find((v) => v.user_id === guide?.user_id)?.documents ?? [];
 
   function resetAndClose() {
     setShowRejectForm(false);

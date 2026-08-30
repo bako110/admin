@@ -4,8 +4,8 @@ import { FileText, CheckCircle2, XCircle } from 'lucide-react';
 import { Modal, Button, Spinner } from '../../../shared/ui';
 import { useToastStore } from '../../../store/toast.store';
 import { extractApiErrorMessage } from '../../../shared/api/client';
-import { useReviewVerification } from '../hooks/useVerification';
-import type { VerificationRequestAdminSummary } from '../types';
+import { useReviewAccount } from '../hooks/useVerification';
+import type { PendingAccountSummary } from '../types';
 import styles from './VerificationReviewModal.module.css';
 
 const DOCUMENT_TYPE_LABELS: Record<string, string> = {
@@ -23,13 +23,13 @@ const ESTABLISHMENT_KIND_LABELS: Record<string, string> = {
 };
 
 interface VerificationReviewModalProps {
-  request: VerificationRequestAdminSummary | null;
+  request: PendingAccountSummary | null;
   onClose: () => void;
 }
 
 export function VerificationReviewModal({ request, onClose }: VerificationReviewModalProps) {
   const push = useToastStore((s) => s.push);
-  const { mutate: review, isPending } = useReviewVerification();
+  const { mutate: review, isPending } = useReviewAccount();
 
   const [showRejectForm, setShowRejectForm] = useState(false);
   const [reason, setReason] = useState('');
@@ -44,7 +44,7 @@ export function VerificationReviewModal({ request, onClose }: VerificationReview
   function handleApprove() {
     if (!request) return;
     review(
-      { requestId: request.id, payload: { status: 'active' } },
+      { userId: request.user_id, payload: { approve: true } },
       {
         onSuccess: () => {
           push({ variant: 'success', message: 'Compte approuvé : ses établissements en attente sont maintenant publiés.' });
@@ -58,7 +58,7 @@ export function VerificationReviewModal({ request, onClose }: VerificationReview
   function handleReject() {
     if (!request || !reason.trim()) return;
     review(
-      { requestId: request.id, payload: { status: 'rejected', review_notes: reason.trim() } },
+      { userId: request.user_id, payload: { approve: false, review_notes: reason.trim() } },
       {
         onSuccess: () => {
           push({ variant: 'success', message: 'Demande rejetée avec motif envoyé au compte.' });
@@ -70,25 +70,35 @@ export function VerificationReviewModal({ request, onClose }: VerificationReview
   }
 
   return (
-    <Modal open={Boolean(request)} onClose={onClose} title="Examiner la demande de vérification">
+    <Modal open={Boolean(request)} onClose={onClose} title="Examiner le compte professionnel">
       <div className={styles.section}>
         <div className={styles.profileHeader}>
           <div>
-            <h3 className={styles.profileName}>{request.user_full_name}</h3>
-            <p className={styles.profileMeta}>{request.user_email}</p>
+            <h3 className={styles.profileName}>{request.user_full_name || 'Utilisateur'}</h3>
+            <p className={styles.profileMeta}>{request.user_email || '—'}</p>
           </div>
         </div>
 
-        <h4 className={styles.sectionTitle}>Document soumis</h4>
-        <div className={styles.documentItem}>
-          <span className={styles.documentInfo}>
-            <FileText size={16} strokeWidth={2} />
-            {DOCUMENT_TYPE_LABELS[request.document_type] ?? request.document_type}
-          </span>
-          <a href={request.document_url} target="_blank" rel="noreferrer" className={styles.documentLink}>
-            Voir le document
-          </a>
-        </div>
+        <h4 className={styles.sectionTitle}>Documents soumis</h4>
+        {request.documents.length === 0 ? (
+          <p className={styles.noEstablishments}>
+            Aucun document soumis par ce compte — vérifiez les établissements ci-dessous avant d'approuver.
+          </p>
+        ) : (
+          <div className={styles.documentList}>
+            {request.documents.map((doc) => (
+              <div key={doc.id} className={styles.documentItem}>
+                <span className={styles.documentInfo}>
+                  <FileText size={16} strokeWidth={2} />
+                  {DOCUMENT_TYPE_LABELS[doc.document_type] ?? doc.document_type}
+                </span>
+                <a href={doc.document_url} target="_blank" rel="noreferrer" className={styles.documentLink}>
+                  Voir le document
+                </a>
+              </div>
+            ))}
+          </div>
+        )}
 
         <h4 className={styles.sectionTitle}>Établissements soumis en attente</h4>
         {request.pending_establishments.length === 0 ? (
