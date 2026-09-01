@@ -41,7 +41,7 @@ export function LoginPage() {
           <span className={styles.icon}>
             <Shield size={24} strokeWidth={1.75} />
           </span>
-          <h1 className={styles.title}>GoTours Admin</h1>
+          <h1 className={styles.title}>FasoViva Admin</h1>
           <p className={styles.subtitle}>Connectez-vous pour gérer le contenu de la plateforme.</p>
         </div>
 
