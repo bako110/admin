@@ -41,7 +41,7 @@ export function DashboardPage() {
     <div className={styles.page}>
       <div className={styles.header}>
         <h1 className={styles.title}>Tableau de bord</h1>
-        <p className={styles.subtitle}>Vue d'ensemble du contenu publié sur FasoViva.</p>
+        <p className={styles.subtitle}>Vue d'ensemble du contenu publié sur BurkinaSira.</p>
       </div>
 
       {isLoading && (

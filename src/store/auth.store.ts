@@ -10,8 +10,8 @@ interface AuthState {
   clearSession: () => void;
 }
 
-const TOKEN_KEY = 'fasoviva-admin:token';
-const USER_KEY = 'fasoviva-admin:user';
+const TOKEN_KEY = 'burkinasira-admin:token';
+const USER_KEY = 'burkinasira-admin:user';
 
 function readStoredUser(): UserPublic | null {
   const raw = localStorage.getItem(USER_KEY);

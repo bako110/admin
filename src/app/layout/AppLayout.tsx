@@ -49,7 +49,7 @@ export function AppLayout() {
           <span className={styles.brandIcon}>
             <Shield size={20} strokeWidth={1.75} />
           </span>
-          <span>FasoViva Admin</span>
+          <span>BurkinaSira Admin</span>
         </div>
 
         <nav className={styles.nav}>

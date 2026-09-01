@@ -10,5 +10,5 @@ function resolveApiBaseUrl(): string {
 
 export const env = {
   apiBaseUrl: resolveApiBaseUrl(),
-  appName: import.meta.env.VITE_APP_NAME ?? 'FasoViva Admin',
+  appName: import.meta.env.VITE_APP_NAME ?? 'BurkinaSira Admin',
 } as const;
