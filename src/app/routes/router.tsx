@@ -16,6 +16,7 @@ import { HealthPage } from '../../features/health/pages/HealthPage';
 import { FinancePage } from '../../features/finance/pages/FinancePage';
 import { ConnectivityPage } from '../../features/connectivity/pages/ConnectivityPage';
 import { VerificationQueuePage } from '../../features/verification/pages/VerificationQueuePage';
+import { IntegrationsPage } from '../../features/integrations/pages/IntegrationsPage';
 
 export const router = createBrowserRouter([
   { path: '/login', element: <LoginPage /> },
@@ -39,6 +40,7 @@ export const router = createBrowserRouter([
           { path: '/finance', element: <FinancePage /> },
           { path: '/connectivity', element: <ConnectivityPage /> },
           { path: '/verification', element: <VerificationQueuePage /> },
+          { path: '/integrations', element: <IntegrationsPage /> },
         ],
       },
     ],

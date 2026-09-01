@@ -15,6 +15,7 @@ import {
   LogOut,
   Shield,
   ShieldCheck,
+  Plug,
 } from 'lucide-react';
 import clsx from 'clsx';
 
@@ -36,6 +37,7 @@ const NAV_ITEMS = [
   { to: '/health', label: 'Santé', Icon: Stethoscope },
   { to: '/finance', label: 'Banques & argent', Icon: Landmark },
   { to: '/connectivity', label: 'Connectivité', Icon: Wifi },
+  { to: '/integrations', label: 'Intégrations', Icon: Plug },
 ] as const;
 
 export function AppLayout() {
