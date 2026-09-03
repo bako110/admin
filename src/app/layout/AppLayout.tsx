@@ -16,6 +16,9 @@ import {
   Shield,
   ShieldCheck,
   Plug,
+  GraduationCap,
+  Baby,
+  Wrench,
 } from 'lucide-react';
 import clsx from 'clsx';
 
@@ -37,6 +40,9 @@ const NAV_ITEMS = [
   { to: '/health', label: 'Santé', Icon: Stethoscope },
   { to: '/finance', label: 'Banques & argent', Icon: Landmark },
   { to: '/connectivity', label: 'Connectivité', Icon: Wifi },
+  { to: '/edu', label: 'Tourisme éducatif', Icon: GraduationCap },
+  { to: '/family', label: 'Famille & quotidien', Icon: Baby },
+  { to: '/roads', label: 'Services routiers', Icon: Wrench },
   { to: '/integrations', label: 'Intégrations', Icon: Plug },
 ] as const;
 

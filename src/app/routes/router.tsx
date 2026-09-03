@@ -17,6 +17,9 @@ import { FinancePage } from '../../features/finance/pages/FinancePage';
 import { ConnectivityPage } from '../../features/connectivity/pages/ConnectivityPage';
 import { VerificationQueuePage } from '../../features/verification/pages/VerificationQueuePage';
 import { IntegrationsPage } from '../../features/integrations/pages/IntegrationsPage';
+import { EduOutingsPage } from '../../features/edu/pages/EduOutingsPage';
+import { FamilyServicesPage } from '../../features/family/pages/FamilyServicesPage';
+import { RoadServicesPage } from '../../features/roads/pages/RoadServicesPage';
 
 export const router = createBrowserRouter([
   { path: '/login', element: <LoginPage /> },
@@ -41,6 +44,9 @@ export const router = createBrowserRouter([
           { path: '/connectivity', element: <ConnectivityPage /> },
           { path: '/verification', element: <VerificationQueuePage /> },
           { path: '/integrations', element: <IntegrationsPage /> },
+          { path: '/edu', element: <EduOutingsPage /> },
+          { path: '/family', element: <FamilyServicesPage /> },
+          { path: '/roads', element: <RoadServicesPage /> },
         ],
       },
     ],
