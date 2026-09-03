@@ -46,6 +46,23 @@ export interface HotelSummary {
   is_verified: boolean;
 }
 
+export interface RoomType {
+  name: string;
+  capacity: number;
+  price_per_night: number;
+  currency: string;
+  total_rooms: number;
+  amenities: string[];
+}
+
+export interface Offer {
+  title: string;
+  description?: string;
+  discount_percent?: number;
+  valid_from?: string;
+  valid_until?: string;
+}
+
 export interface CreateHotelPayload {
   name: string;
   type: AccommodationType;
@@ -56,6 +73,8 @@ export interface CreateHotelPayload {
   address?: string;
   photos?: string[];
   amenities?: string[];
+  room_types?: RoomType[];
+  offers?: Offer[];
   contact_phone?: string;
   contact_email?: string;
 }
@@ -73,6 +92,8 @@ export interface HotelDetail {
   address?: string;
   photos: string[];
   amenities: string[];
+  room_types: RoomType[];
+  offers: Offer[];
   contact_phone?: string;
   contact_email?: string;
 }

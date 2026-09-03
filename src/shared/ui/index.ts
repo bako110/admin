@@ -1,6 +1,7 @@
 export { Button } from './Button';
 export { Card } from './Card';
 export { Input } from './Input';
+export { TagsInput } from './TagsInput';
 export { Spinner } from './Spinner';
 export { Modal } from './Modal';
 export { EmptyResults } from './EmptyResults';

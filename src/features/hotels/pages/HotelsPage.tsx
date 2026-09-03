@@ -52,6 +52,18 @@ export function HotelsPage() {
     { key: 'region', header: 'Région', render: (row) => row.region },
     { key: 'city', header: 'Ville', render: (row) => row.city ?? '—' },
     {
+      key: 'price',
+      header: 'Prix / nuit',
+      render: (row) =>
+        row.min_price != null ? (
+          <span className={styles.name}>
+            {row.min_price.toLocaleString('fr-FR')} {row.currency}
+          </span>
+        ) : (
+          <Badge tone="danger">Aucun prix</Badge>
+        ),
+    },
+    {
       key: 'rating',
       header: 'Note',
       render: (row) =>

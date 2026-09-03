@@ -1,11 +1,13 @@
 import { useState, type FormEvent } from 'react';
 
-import { Modal, Button, Input, Spinner, PhotoUploadField, LocationPicker } from '../../../shared/ui';
+import { Modal, Button, Input, TagsInput, Spinner, PhotoUploadField, LocationPicker } from '../../../shared/ui';
 import { useToastStore } from '../../../store/toast.store';
 import { extractApiErrorMessage } from '../../../shared/api/client';
 import { BURKINA_REGIONS } from '../../../shared/config/regions';
 import { useCreateHotel } from '../hooks/useHotels';
-import { ACCOMMODATION_TYPES, ACCOMMODATION_TYPE_LABELS, type AccommodationType } from '../types';
+import { RoomTypesEditor } from './RoomTypesEditor';
+import { OffersEditor } from './OffersEditor';
+import { ACCOMMODATION_TYPES, ACCOMMODATION_TYPE_LABELS, type AccommodationType, type RoomType, type Offer } from '../types';
 import styles from '../../../shared/ui/formLayout.module.css';
 
 interface CreateHotelModalProps {
@@ -28,6 +30,9 @@ export function CreateHotelModal({ open, onClose }: CreateHotelModalProps) {
   const [contactPhone, setContactPhone] = useState('');
   const [contactEmail, setContactEmail] = useState('');
   const [photos, setPhotos] = useState<string[]>([]);
+  const [amenities, setAmenities] = useState<string[]>([]);
+  const [roomTypes, setRoomTypes] = useState<RoomType[]>([]);
+  const [offers, setOffers] = useState<Offer[]>([]);
 
   function resetAndClose() {
     setName('');
@@ -41,6 +46,9 @@ export function CreateHotelModal({ open, onClose }: CreateHotelModalProps) {
     setContactPhone('');
     setContactEmail('');
     setPhotos([]);
+    setAmenities([]);
+    setRoomTypes([]);
+    setOffers([]);
     onClose();
   }
 
@@ -62,6 +70,9 @@ export function CreateHotelModal({ open, onClose }: CreateHotelModalProps) {
         contact_phone: contactPhone || undefined,
         contact_email: contactEmail || undefined,
         photos,
+        amenities,
+        room_types: roomTypes,
+        offers,
       },
       {
         onSuccess: () => {
@@ -165,6 +176,17 @@ export function CreateHotelModal({ open, onClose }: CreateHotelModalProps) {
           onChange={setPhotos}
           onError={(msg) => push({ variant: 'error', message: msg })}
         />
+
+        <TagsInput
+          label="Équipements de l'établissement"
+          values={amenities}
+          onChange={setAmenities}
+          placeholder="Ex : Piscine, Parking, Wi-Fi..."
+        />
+
+        <RoomTypesEditor roomTypes={roomTypes} onChange={setRoomTypes} />
+
+        <OffersEditor offers={offers} onChange={setOffers} />
 
         {error && <p className={styles.errorText}>{extractApiErrorMessage(error, 'Une erreur est survenue')}</p>}
 
