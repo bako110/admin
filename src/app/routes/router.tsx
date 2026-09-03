@@ -20,6 +20,9 @@ import { IntegrationsPage } from '../../features/integrations/pages/Integrations
 import { EduOutingsPage } from '../../features/edu/pages/EduOutingsPage';
 import { FamilyServicesPage } from '../../features/family/pages/FamilyServicesPage';
 import { RoadServicesPage } from '../../features/roads/pages/RoadServicesPage';
+import { DiasporaContentPage } from '../../features/diaspora/pages/DiasporaContentPage';
+import { QuoteRequestsPage } from '../../features/business/pages/QuoteRequestsPage';
+import { InternationalPage } from '../../features/international/pages/InternationalPage';
 
 export const router = createBrowserRouter([
   { path: '/login', element: <LoginPage /> },
@@ -47,6 +50,9 @@ export const router = createBrowserRouter([
           { path: '/edu', element: <EduOutingsPage /> },
           { path: '/family', element: <FamilyServicesPage /> },
           { path: '/roads', element: <RoadServicesPage /> },
+          { path: '/diaspora', element: <DiasporaContentPage /> },
+          { path: '/business', element: <QuoteRequestsPage /> },
+          { path: '/international', element: <InternationalPage /> },
         ],
       },
     ],

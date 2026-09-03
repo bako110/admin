@@ -19,6 +19,9 @@ import {
   GraduationCap,
   Baby,
   Wrench,
+  Plane,
+  Briefcase,
+  Globe2,
 } from 'lucide-react';
 import clsx from 'clsx';
 
@@ -43,6 +46,9 @@ const NAV_ITEMS = [
   { to: '/edu', label: 'Tourisme éducatif', Icon: GraduationCap },
   { to: '/family', label: 'Famille & quotidien', Icon: Baby },
   { to: '/roads', label: 'Services routiers', Icon: Wrench },
+  { to: '/diaspora', label: 'Diaspora', Icon: Plane },
+  { to: '/business', label: "Tourisme d'affaires", Icon: Briefcase },
+  { to: '/international', label: 'International', Icon: Globe2 },
   { to: '/integrations', label: 'Intégrations', Icon: Plug },
 ] as const;
 
