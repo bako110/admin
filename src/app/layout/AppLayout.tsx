@@ -63,7 +63,7 @@ export function AppLayout() {
           <span className={styles.brandIcon}>
             <Shield size={20} strokeWidth={1.75} />
           </span>
-          <span>BurkinaSira Admin</span>
+          <span>BurkinaSira {user?.role === 'moderator' ? 'Modération' : 'Admin'}</span>
         </div>
 
         <nav className={styles.nav}>
