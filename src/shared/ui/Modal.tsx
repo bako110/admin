@@ -9,9 +9,11 @@ interface ModalProps {
   onClose: () => void;
   title: string;
   children: ReactNode;
+  /** 'lg' pour les fiches détaillées (par défaut : largeur compacte). */
+  size?: 'md' | 'lg';
 }
 
-export function Modal({ open, onClose, title, children }: ModalProps) {
+export function Modal({ open, onClose, title, children, size = 'md' }: ModalProps) {
   useEffect(() => {
     if (!open) return;
     document.body.style.overflow = 'hidden';
@@ -30,7 +32,7 @@ export function Modal({ open, onClose, title, children }: ModalProps) {
   return createPortal(
     <div className={styles.scrim} onClick={onClose}>
       <div
-        className={styles.panel}
+        className={size === 'lg' ? `${styles.panel} ${styles.panelLg}` : styles.panel}
         role="dialog"
         aria-modal="true"
         aria-label={title}

@@ -37,6 +37,10 @@
 }
 
 @media (min-width: 640px) {
+  .panelLg {
+    max-width: 760px;
+  }
+
   .panel {
     border-radius: var(--radius-lg);
     margin: 0 var(--space-4);
